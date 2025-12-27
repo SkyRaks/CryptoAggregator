@@ -1,14 +1,14 @@
 import mongoose from "mongoose";
 
 const coinSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    },
     symbol: {
         type: String,
         required: true,
         unique: true
-    },
-    name: {
-        type: String,
-        required: true
     },
     slug: {
         type: String,
