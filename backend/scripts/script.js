@@ -1,15 +1,14 @@
 import dotenv from 'dotenv';
 
-const dotBlya = dotenv.config({ path: "../../.env" });
+dotenv.config({ path: "../../.env" });
 
 const base_url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest";
 const api_key = process.env.API_KEY;
-// const API_KEY = "7c426efde64148b8bf7ccfff864b43d6";
 
 getLatest();
 
 async function getLatest() {
-    const params = '?start=1&limit=10&convert=USD';
+    const params = '?start=1&limit=15&convert=USD';
 
     try {
         const res = await fetch(base_url + params, {
@@ -30,17 +29,14 @@ async function getLatest() {
         const arr = []
 
         for (let coin = 0; coin < coinData.length; coin++) { // so this is how to get stuff
-            // gotta do something better than loop
-            const name = coinData[coin]['name']; 
-            const symbol = coinData[coin]['symbol'];
-            const slug = coinData[coin]['slug'];
-            // console.log(name + " " + symbol + " " + slug);
             arr[coin] = []
-            arr[coin].push(name);
-            arr[coin].push(symbol);
-            arr[coin].push(slug);
+            const quote = coinData[coin]['quote']
+            // arr[coin].push(coinData[coin]['id']);
+            // arr[coin].push(coinData[coin]['name']);
+            arr[coin].push(coinData[coin]['symbol']);
+            arr[coin].push(quote);
         }
-        console.log(arr);
+        console.log(arr[0]);
     } catch (error) {
         console.error(error);
     }
