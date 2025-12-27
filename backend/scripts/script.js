@@ -4,7 +4,6 @@ const dotBlya = dotenv.config({ path: "../../.env" });
 
 const base_url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest";
 const api_key = process.env.API_KEY;
-// const API_KEY = "7c426efde64148b8bf7ccfff864b43d6";
 
 getLatest();
 
