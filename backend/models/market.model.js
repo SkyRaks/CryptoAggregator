@@ -5,10 +5,6 @@ const marketSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    coin_id: { // coin_id related to the exchange
-        type: Number,
-        required: true
-    },
     base_currency: {
         type: String, // gonna look like BTC
         required: true
