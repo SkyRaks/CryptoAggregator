@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: "../../.env" });
 
 const base_url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest";
-const api_key = process.env.API_KEY;
+const api_key = process.env.COIN_MARKET_CAP_API_KEY;
 
 getLatest();
 

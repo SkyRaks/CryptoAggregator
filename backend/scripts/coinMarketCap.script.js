@@ -4,7 +4,7 @@ import Coin from "../models/coin.model.js";
 
 dotenv.config({ path: "../../.env" });
 
-const API_KEY = process.env.API_KEY;
+const API_KEY = process.env.COIN_MARKET_CAP_API_KEY;
 const BASE_URL = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest";
 
 // await mongoose.connect(process.env.MONGO_URI) // for debug
