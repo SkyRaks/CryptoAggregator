@@ -1,5 +1,6 @@
 import { createHash, createHmac } from 'crypto';
 import dotenv from 'dotenv';
+import { response } from 'express';
 import { URLSearchParams } from 'url';
 
 dotenv.config({ path: "../../.env" });
@@ -7,20 +8,55 @@ const privateKey = process.env.KRAKEN_PRIVATE_API_KEY;
 
 // GET ticker: https://api.kraken.com/0/public/Ticker
 
-main()
+main();
 
-function main() {
-    request({
+async function main() {
+    const resp = await request({
         method: "GET",
         path: "/0/public/Ticker",
         environment: "https://api.kraken.com",
-        query: {pair: "XBTUSD"},
+        query: {pair: "XXBTZUSD,XETHZUSD,USDTZUSD" },
+        // XBTUSD, ETHUSD, USDTUSD, BNBUSD, XRPUSD, USDCUSD, SOLUSD, TRXUSD, DOGEUSD, ADAUSD
     })
-    .then((response) => response.text())
-    .then(console.log)
+
+    const data = resp['result'];
+    const fields = await getFields(data);
+    // const coin = data['XXBTZUSD'];
+    // const price = coin['a'][0];
+
+    console.log(fields);
 }
 
-function request({method = "GET", path = "", query = {}, body = {}, publicKey = "", privateKey = "", environment = ""}) {
+async function getFields(data) {
+    const marketModel = []
+    let index = 0;
+    for (const [pair, coin] of Object.entries(data)) {
+        marketModel[index] = [];
+
+        switch (pair) {
+            case 'XXBTZUSD':
+                marketModel[index].push("BTC");
+                console.log('i was here')
+                break;
+            case 'XETHZUSD':
+                marketModel[index].push("ETH");
+                break;
+            case 'USDTZUSD':
+                marketModel[index].push("USDT");
+                break;
+        }
+
+        marketModel[index].push("USD") // for now it is hardcoded
+
+        const price = coin['a'][0];
+        marketModel[index].push(price);
+        index++;
+    }
+
+    return marketModel;
+}
+
+async function request({method = "GET", path = "", query = {}, body = {}, publicKey = "", privateKey = "", environment = ""}) {
     // this func takes OBJECT, like json file
     let url = environment + path;
     let queryString = "";
@@ -53,7 +89,9 @@ function request({method = "GET", path = "", query = {}, body = {}, publicKey = 
         headers["API-Key"] = publicKey;
         headers["Api-Sign"] = getSignature(privateKey, queryString + (bodyString || ""), nonce, path)
     }
-    return fetch(url, {method: method, headers: headers, body: bodyString})
+    const res = await fetch(url, {method: method, headers: headers, body: bodyString})
+
+    return await res.json()
 }
 
 function getSignature(privateKey = "", data = "", nonce = "", path = "") {
