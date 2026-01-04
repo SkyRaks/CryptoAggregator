@@ -36,7 +36,6 @@ async function getFields(data) {
         switch (pair) {
             case 'XXBTZUSD':
                 marketModel[index].push("BTC");
-                console.log('i was here')
                 break;
             case 'XETHZUSD':
                 marketModel[index].push("ETH");
@@ -50,6 +49,13 @@ async function getFields(data) {
 
         const price = coin['a'][0];
         marketModel[index].push(price);
+        const volume24h = coin['v'][1];
+        marketModel[index].push(volume24h);
+        // next will be percent change 24h
+        const last_price = coin['c'][0];
+        const opening_price = coin['o'];
+        console.log(`last price ${last_price}`);
+        console.log(`opening price ${opening_price}`);
         index++;
     }
 
