@@ -1,10 +1,11 @@
 import { createHash, createHmac } from 'crypto';
 import dotenv from 'dotenv';
-import { response } from 'express';
 import { URLSearchParams } from 'url';
 
 dotenv.config({ path: "../../.env" });
 const privateKey = process.env.KRAKEN_PRIVATE_API_KEY;
+
+const ENVIRONMENT = "https://api.kraken.com";
 
 // GET ticker: https://api.kraken.com/0/public/Ticker
 
@@ -14,7 +15,7 @@ async function main() {
     const resp = await request({
         method: "GET",
         path: "/0/public/Ticker",
-        environment: "https://api.kraken.com",
+        // environment: ENVIRONMENT,
         query: {pair: "XXBTZUSD,XETHZUSD,USDTZUSD" },
         // XBTUSD, ETHUSD, USDTUSD, BNBUSD, XRPUSD, USDCUSD, SOLUSD, TRXUSD, DOGEUSD, ADAUSD
     })
@@ -49,22 +50,50 @@ async function getFields(data) {
 
         const price = coin['a'][0];
         marketModel[index].push(price);
+
         const volume24h = coin['v'][1];
         marketModel[index].push(volume24h);
+
         // next will be percent change 24h
         const last_price = coin['c'][0];
         const opening_price = coin['o'];
-        console.log(`last price ${last_price}`);
-        console.log(`opening price ${opening_price}`);
+
+        const percent_change_24h = ((last_price - opening_price) / opening_price) * 100;
+        marketModel[index].push(percent_change_24h);
+
+        // for 1h percent change we need to GET ohlc data
+        const percent_change1h = await getOHLC(pair);
+        marketModel[index].push(percent_change1h);
+
         index++;
     }
 
     return marketModel;
 }
 
-async function request({method = "GET", path = "", query = {}, body = {}, publicKey = "", privateKey = "", environment = ""}) {
+async function getOHLC(pair) {
+    const resp = await request({
+        method: "GET",
+        path: "/0/public/OHLC",
+        query: {
+            pair: pair,
+            interval: 60,
+        }
+    })
+    // we need 'close' 
+    const data = resp['result'][pair];
+
+    const current_close = Number(data[data.length - 1][4]);
+    const previous_close = Number(data[data.length - 2][4]);
+
+    const percent_change1h = ((current_close - previous_close) / previous_close) * 100;
+
+    return percent_change1h;
+}
+
+async function request({method = "GET", path = "", query = {}, body = {}, publicKey = "", privateKey = ""}) {
     // this func takes OBJECT, like json file
-    let url = environment + path;
+    let url = ENVIRONMENT + path;
     let queryString = "";
 
     if (Object.keys(query).length > 0) {
