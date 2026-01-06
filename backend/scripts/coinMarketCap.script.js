@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import Coin from "../models/coin.model.js";
-// import mongoose from 'mongoose';
+import mongoose from 'mongoose';
 
 dotenv.config({ path: "../../.env" });
 
@@ -10,7 +10,9 @@ const BASE_URL = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/l
 // await mongoose.connect(process.env.MONGO_URI) // for debug
 // getCoinMarketCapData("USD"); // for debug
 
-async function getCoinMarketCapData(quote_currency) {
+export async function getCoinMarketCapData(quote_currency) {
+    await mongoose.connect(process.env.MONGO_URI)
+
     const params = `?start=1&limit=15&convert=${quote_currency}`
 
     try {
@@ -29,33 +31,32 @@ async function getCoinMarketCapData(quote_currency) {
         const data = await res.json();
         const coinData = data['data']
 
-        const marketModel = []
+        const marketModel = {};
 
         for (let coin = 0; coin < coinData.length; coin++) {
 
-            const name = coinData[coin]['name']
-            const checkForCoin = await Coin.findOne({name: name});
+            const symbol = coinData[coin]['symbol']
+            const checkForCoin = await Coin.findOne({symbol: symbol});
 
             if (!checkForCoin) continue; // if i don't have this coin in my coin model then skip it
 
-            marketModel[coin] = []
+            marketModel[symbol] = [];
 
-            // marketModel[coin].push(coinData[coin]['id']);
-            marketModel[coin].push(coinData[coin]['symbol']);
-            marketModel[coin].push(quote_currency)
+            marketModel[symbol].push(quote_currency)
             const quote = coinData[coin]['quote'][quote_currency]
-            marketModel[coin].push(quote['price'])
-            marketModel[coin].push(quote['volume_24h'])
-            marketModel[coin].push(quote['percent_change_24h'])
-            marketModel[coin].push(quote['percent_change_1h'])
+            marketModel[symbol].push(quote['price'])
+            marketModel[symbol].push(quote['volume_24h'])
+            marketModel[symbol].push(quote['percent_change_24h'])
+            marketModel[symbol].push(quote['percent_change_1h'])
+            marketModel[symbol].push("coinmarketcap")
             
             // this is allmost like market Model
             //  but exchange at the end, 
             // and base currency is the same as symbol
-        }
-        marketModel.push("coinmarketcap");
 
-        console.log(marketModel);
+        } // reworked it to be object for better exthracting data later
+
+        await mongoose.connection.close();
         return marketModel;
     } catch (error) {
         console.log(error.status);

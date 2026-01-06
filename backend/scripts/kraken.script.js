@@ -9,15 +9,16 @@ const ENVIRONMENT = "https://api.kraken.com";
 
 // GET ticker: https://api.kraken.com/0/public/Ticker
 
-main();
-
-async function main() {
+export async function main() {
     const resp = await request({
         method: "GET",
         path: "/0/public/Ticker",
-        // environment: ENVIRONMENT,
-        query: {pair: "XXBTZUSD,XETHZUSD,USDTZUSD" },
-        // XBTUSD, ETHUSD, USDTUSD, BNBUSD, XRPUSD, USDCUSD, SOLUSD, TRXUSD, DOGEUSD, ADAUSD
+        query: {pair: "XXBTZUSD,XETHZUSD,USDTZUSD,BNBUSD,USDCUSD,XXRPZUSD,SOLUSD,TRXUSD,DOGEUSD,ADAUSD" },
+        // ,BNBUSD,
+        // XDGUSD
+        // XRPUSD
+        // XXRPZUSD
+        // ,USDCUSD,SOLUSD,TRXUSD,DOGEUSD,ADAUSD
     })
 
     const data = resp['result'];
@@ -25,45 +26,81 @@ async function main() {
     // const coin = data['XXBTZUSD'];
     // const price = coin['a'][0];
 
-    console.log(fields);
+    return fields;
 }
 
 async function getFields(data) {
-    const marketModel = []
+    const marketModel = {}
+
     let index = 0;
     for (const [pair, coin] of Object.entries(data)) {
-        marketModel[index] = [];
+        let name = ""
 
         switch (pair) {
             case 'XXBTZUSD':
-                marketModel[index].push("BTC");
+                name = "BTC"
+                marketModel[name] = []
                 break;
             case 'XETHZUSD':
-                marketModel[index].push("ETH");
+                name = "ETH"
+                marketModel[name] = []
                 break;
             case 'USDTZUSD':
-                marketModel[index].push("USDT");
+                name = "USDT"
+                marketModel[name] = []
                 break;
+            case 'BNBUSD':
+                name = "BNB"
+                marketModel[name] = []
+                break;
+            case 'XXRPZUSD':
+                name = "XRP"
+                marketModel[name] = []
+                break; 
+            case 'USDCUSD':
+                name = "USDC"
+                marketModel[name] = []
+                break; 
+            case 'SOLUSD':
+                name = "SOL"
+                marketModel[name] = []
+                break; 
+            case 'TRXUSD':
+                name = "TRX"
+                marketModel[name] = []
+                break; 
+            case 'XDGUSD':
+                name = "DOGE"
+                marketModel[name] = []
+                break; 
+            case 'ADAUSD':
+                name = "ADA"
+                marketModel[name] = []
+                break; 
+            // i don't like all of these cases...
         }
 
-        marketModel[index].push("USD") // for now it is hardcoded
+        // marketModel[index].push("USD") // for now it is hardcoded
+        marketModel[name].push("USD") // for now it is hardcoded
 
-        const price = coin['a'][0];
-        marketModel[index].push(price);
+        const price = Number(coin['a'][0]);
+        marketModel[name].push(price);
 
-        const volume24h = coin['v'][1];
-        marketModel[index].push(volume24h);
+        const volume24h = Number(coin['v'][1]);
+        marketModel[name].push(volume24h);
 
         // next will be percent change 24h
         const last_price = coin['c'][0];
         const opening_price = coin['o'];
 
         const percent_change_24h = ((last_price - opening_price) / opening_price) * 100;
-        marketModel[index].push(percent_change_24h);
+        marketModel[name].push(percent_change_24h);
 
         // for 1h percent change we need to GET ohlc data
         const percent_change1h = await getOHLC(pair);
-        marketModel[index].push(percent_change1h);
+        marketModel[name].push(percent_change1h);
+
+        marketModel[name].push("kraken");
 
         index++;
     }
@@ -80,7 +117,7 @@ async function getOHLC(pair) {
             interval: 60,
         }
     })
-    // we need 'close' 
+
     const data = resp['result'][pair];
 
     const current_close = Number(data[data.length - 1][4]);
@@ -153,45 +190,3 @@ function mapToURLValues(object) {
         return [k, v]
     }))
 }
-
-// HMAC-SHA512 of (URI path + SHA256(nonce + POST data)) and base64 decoded secret API key
-// ITS ALL IS NOT WORKING WITH MY REQUEST
-// function getSignature(urlPath, data, secret) {
-//     let encoded;
-//     if (typeof data === 'string') {
-//         const jsonData = JSON.parse(data);
-//         encoded = jsonData.nonce + data;
-//     } else if (typeof data === 'object') {
-//         const dataStr = querystring.stringify(data);
-//         encoded = data.nonce + dataStr;
-//     } else {
-//         throw new Error("Invalid data type");
-//     }
-
-//     const sha256Hash = crypto.createHash('sha256').update(encoded).digest();
-//     const message = urlPath + sha256Hash.toString('binary'); // this is it: (URI path + SHA256(nonce + POST data)
-
-//     const secretBuffer = Buffer.from(secret, 'base64'); // and base64 decoded secret API key
-
-//     const hmac = crypto.createHmac('sha512', secretBuffer);
-//     hmac.update(message, 'binary'); // this is ready
-
-//     const signature = hmac.digest('base64');
-//     return signature;
-// }
-
-
-// THIS IS TEST CASE STUFF
-// let nonce = Date.now().toString();
-
-// const payload = {
-//     // this is query string, params, data...
-//     "nonce": nonce,
-//     "ordertype": "limit", 
-//     "pair": "XBTUSD",
-//     "price": 37500, 
-//     "type": "buy",
-//     "volume": 1.25
-// }
-// const mySignature = getSignature("/0/private/AddOrder", payload, secret_key);
-// console.log(`API Sign ${mySignature}`);
