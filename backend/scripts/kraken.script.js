@@ -45,10 +45,8 @@ export async function main() {
 async function getFields(data) {
     const marketModel = {}
 
-    let index = 0;
     for (const [pair, coin] of Object.entries(data)) {
-        let name = ""
-        name = coinNames[pair]
+        let name = coinNames[pair]
         marketModel[name] = []
 
         marketModel[name].push("USD") // for now it is hardcoded
@@ -71,8 +69,6 @@ async function getFields(data) {
         marketModel[name].push(percent_change1h);
 
         marketModel[name].push("kraken");
-
-        index++;
     }
 
     return marketModel;
