@@ -9,5 +9,6 @@ dotenv.config({ path: "../../.env" });
 const coinMarketCapData = await getCoinMarketCapData("USD");
 const krakenData = await main();
 
-console.log(typeof(coinMarketCapData));
-console.log(typeof(krakenData));
+for (const [symbol, data] of Object.entries(coinMarketCapData)) {
+    console.log(symbol);
+}

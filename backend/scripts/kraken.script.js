@@ -7,6 +7,19 @@ const privateKey = process.env.KRAKEN_PRIVATE_API_KEY;
 
 const ENVIRONMENT = "https://api.kraken.com";
 
+const coinNames = {
+    "XXBTZUSD": "BTC",
+    "XETHZUSD": "ETH",
+    "USDTZUSD": "USDT",
+    "BNBUSD": "BNB",
+    "XXRPZUSD": "XRP",
+    "USDCUSD": "USDC",
+    "SOLUSD": "SOL",
+    "TRXUSD": "TRX",
+    "XDGUSD": "DOGE",
+    "ADAUSD": "ADA",
+}
+
 // GET ticker: https://api.kraken.com/0/public/Ticker
 
 export async function main() {
@@ -35,52 +48,9 @@ async function getFields(data) {
     let index = 0;
     for (const [pair, coin] of Object.entries(data)) {
         let name = ""
+        name = coinNames[pair]
+        marketModel[name] = []
 
-        switch (pair) {
-            case 'XXBTZUSD':
-                name = "BTC"
-                marketModel[name] = []
-                break;
-            case 'XETHZUSD':
-                name = "ETH"
-                marketModel[name] = []
-                break;
-            case 'USDTZUSD':
-                name = "USDT"
-                marketModel[name] = []
-                break;
-            case 'BNBUSD':
-                name = "BNB"
-                marketModel[name] = []
-                break;
-            case 'XXRPZUSD':
-                name = "XRP"
-                marketModel[name] = []
-                break; 
-            case 'USDCUSD':
-                name = "USDC"
-                marketModel[name] = []
-                break; 
-            case 'SOLUSD':
-                name = "SOL"
-                marketModel[name] = []
-                break; 
-            case 'TRXUSD':
-                name = "TRX"
-                marketModel[name] = []
-                break; 
-            case 'XDGUSD':
-                name = "DOGE"
-                marketModel[name] = []
-                break; 
-            case 'ADAUSD':
-                name = "ADA"
-                marketModel[name] = []
-                break; 
-            // i don't like all of these cases...
-        }
-
-        // marketModel[index].push("USD") // for now it is hardcoded
         marketModel[name].push("USD") // for now it is hardcoded
 
         const price = Number(coin['a'][0]);
