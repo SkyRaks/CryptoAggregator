@@ -20,6 +20,8 @@ const coinNames = {
     "ADAUSD": "ADA",
 }
 
+console.log(await main());
+
 // GET ticker: https://api.kraken.com/0/public/Ticker
 
 export async function main() {
@@ -27,19 +29,11 @@ export async function main() {
         method: "GET",
         path: "/0/public/Ticker",
         query: {pair: "XXBTZUSD,XETHZUSD,USDTZUSD,BNBUSD,USDCUSD,XXRPZUSD,SOLUSD,TRXUSD,DOGEUSD,ADAUSD" },
-        // ,BNBUSD,
-        // XDGUSD
-        // XRPUSD
-        // XXRPZUSD
-        // ,USDCUSD,SOLUSD,TRXUSD,DOGEUSD,ADAUSD
     })
 
     const data = resp['result'];
-    const fields = await getFields(data);
-    // const coin = data['XXBTZUSD'];
-    // const price = coin['a'][0];
 
-    return fields;
+    return await getFields(data);
 }
 
 async function getFields(data) {

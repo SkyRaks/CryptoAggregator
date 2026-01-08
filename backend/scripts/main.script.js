@@ -4,12 +4,12 @@ import { main } from './kraken.script.js';
 
 dotenv.config({ path: "../../.env" });
 
-// now here i have to extract data from my scripts and aggregate it here somehow
-
 const coinMarketCapData = await getCoinMarketCapData("USD");
 const krakenData = await main();
 
-await aggregate();
+// await aggregate();
+
+// now i need to make json with fields to save to db
 
 async function aggregate() {
     const aggregatedData = {}
