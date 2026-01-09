@@ -7,7 +7,7 @@ dotenv.config({ path: "../../.env" });
 const coinMarketCapData = await getCoinMarketCapData("USD");
 const krakenData = await main();
 
-// await aggregate();
+console.log(await aggregate());
 
 // now i need to make json with fields to save to db
 
@@ -19,40 +19,47 @@ async function aggregate() {
         // i'm looping through coinMarket and using that symbol to get that value in kraken
 
         //quote currency
-        const coinMarketQuoteCurrency = data[0];
-        const krakenQuoteCurrency = krakenData[symbol][0];
+        const coinMarketQuoteCurrency = data['quote_currency'];
+        const krakenQuoteCurrency = krakenData[symbol]['quote_currency'];
 
         // price
-        const coinMarketPrice = data[1];
-        console.log("coinMarket price: ", coinMarketPrice);
-        const krakenPrice = krakenData[symbol][1];
-        console.log("kraken price: ", krakenPrice)
+        const coinMarketPrice = data['price'];
+        const krakenPrice = krakenData[symbol]['price'];
 
         // volume
-        const coinMarketVolume = data[2];
-        const krakenVolume = krakenData[symbol][2];
+        const coinMarketVolume = data['volume_24h'];
+        const krakenVolume = krakenData[symbol]['volume_24h'];
 
         // percent change 24h
-        const coinMarketPercent24h = data[3];
-        const krakenPercent24h = krakenData[symbol][3];
+        const coinMarketPercent24h = data['percent_change_24h'];
+        const krakenPercent24h = krakenData[symbol]['percent_change_24h'];
 
         // percent change 1h
-        const coinMarketPercent1h = data[3];
-        const krakenPercent1h = krakenData[symbol][3];
+        const coinMarketPercent1h = data['percent_change_1h'];
+        const krakenPercent1h = krakenData[symbol]['percent_change_1h'];
+
+        // marketModel[symbol] = {};
+
+        // marketModel[symbol]['quote_currency'] = quote_currency;
+        // const quote = coinData[coin]['quote'][quote_currency]
+        // marketModel[symbol]['price'] = quote['price']
+        // marketModel[symbol]['volume_24h'] = quote['volume_24h']
+        // marketModel[symbol]['percent_change_24h'] = quote['percent_change_24h']
+        // marketModel[symbol]['percent_change_1h'] = quote['percent_change_1h']
+        // marketModel[symbol]['market'] = "coinmarketcap"
 
         // as before i create array for coin and there willbe its values
-        aggregatedData[symbol] = []
+        aggregatedData[symbol] = {}
 
-        // aggregatedData[symbol].push("USD") // i know it's hardcoded
-        if (coinMarketQuoteCurrency == krakenQuoteCurrency) aggregatedData[symbol].push(coinMarketQuoteCurrency); // idk
+        if (coinMarketQuoteCurrency == krakenQuoteCurrency) aggregatedData[symbol]['quote_currency'] = coinMarketQuoteCurrency; // idk
 
-        aggregatedData[symbol].push((coinMarketPrice + krakenPrice) / 2) // this should be a number of exchanges but for now it's 2
+        aggregatedData[symbol]['price'] = (coinMarketPrice + krakenPrice) / 2 // this should be a number of exchanges but for now it's 2
 
-        aggregatedData[symbol].push((coinMarketVolume + krakenVolume) / 2); // volume
+        aggregatedData[symbol]['volume_24h'] = (coinMarketVolume + krakenVolume) / 2; // volume
 
-        aggregatedData[symbol].push((coinMarketPercent24h + krakenPercent24h) / 2); // percent change 24h
+        aggregatedData[symbol]['percent_change_24h'] = (coinMarketPercent24h + krakenPercent24h) / 2; // percent change 24h
 
-        aggregatedData[symbol].push((coinMarketPercent1h + krakenPercent1h) / 2); // percent change 1h
+        aggregatedData[symbol]['percent_change_1h'] = (coinMarketPercent1h + krakenPercent1h) / 2; // percent change 1h
     }
     return aggregatedData;
 }

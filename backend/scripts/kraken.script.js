@@ -20,7 +20,7 @@ const coinNames = {
     "ADAUSD": "ADA",
 }
 
-console.log(await main());
+// console.log(await main());
 
 // GET ticker: https://api.kraken.com/0/public/Ticker
 
@@ -41,28 +41,28 @@ async function getFields(data) {
 
     for (const [pair, coin] of Object.entries(data)) {
         let name = coinNames[pair]
-        marketModel[name] = []
+        marketModel[name] = {}
 
-        marketModel[name].push("USD") // for now it is hardcoded
+        marketModel[name]['quote_currency'] = "USD" // for now it is hardcoded
 
         const price = Number(coin['a'][0]);
-        marketModel[name].push(price);
+        marketModel[name]['price'] = price;
 
         const volume24h = Number(coin['v'][1]);
-        marketModel[name].push(volume24h);
+        marketModel[name]['volume_24h'] = volume24h;
 
         // next will be percent change 24h
         const last_price = coin['c'][0];
         const opening_price = coin['o'];
 
         const percent_change_24h = ((last_price - opening_price) / opening_price) * 100;
-        marketModel[name].push(percent_change_24h);
+        marketModel[name]['percent_change_24h'] = percent_change_24h;
 
         // for 1h percent change we need to GET ohlc data
         const percent_change1h = await getOHLC(pair);
-        marketModel[name].push(percent_change1h);
+        marketModel[name]['percent_change_1h'] = percent_change1h;
 
-        marketModel[name].push("kraken");
+        marketModel[name]['market'] = "kraken";
     }
 
     return marketModel;
