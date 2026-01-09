@@ -38,17 +38,6 @@ async function aggregate() {
         const coinMarketPercent1h = data['percent_change_1h'];
         const krakenPercent1h = krakenData[symbol]['percent_change_1h'];
 
-        // marketModel[symbol] = {};
-
-        // marketModel[symbol]['quote_currency'] = quote_currency;
-        // const quote = coinData[coin]['quote'][quote_currency]
-        // marketModel[symbol]['price'] = quote['price']
-        // marketModel[symbol]['volume_24h'] = quote['volume_24h']
-        // marketModel[symbol]['percent_change_24h'] = quote['percent_change_24h']
-        // marketModel[symbol]['percent_change_1h'] = quote['percent_change_1h']
-        // marketModel[symbol]['market'] = "coinmarketcap"
-
-        // as before i create array for coin and there willbe its values
         aggregatedData[symbol] = {}
 
         if (coinMarketQuoteCurrency == krakenQuoteCurrency) aggregatedData[symbol]['quote_currency'] = coinMarketQuoteCurrency; // idk
