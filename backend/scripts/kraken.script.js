@@ -43,7 +43,11 @@ async function getFields(data) {
         let name = coinNames[pair]
         marketModel[name] = {}
 
-        marketModel[name]['quote_currency'] = "USD" // for now it is hardcoded
+        marketModel[name]['exchange'] = "kraken";
+
+        marketModel[name]['base_currency'] = name;
+
+        marketModel[name]['quote_currency'] = "USD"; // for now it is hardcoded
 
         const price = Number(coin['a'][0]);
         marketModel[name]['price'] = price;
@@ -62,7 +66,6 @@ async function getFields(data) {
         const percent_change1h = await getOHLC(pair);
         marketModel[name]['percent_change_1h'] = percent_change1h;
 
-        marketModel[name]['market'] = "kraken";
     }
 
     return marketModel;

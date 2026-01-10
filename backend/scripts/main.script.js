@@ -7,9 +7,7 @@ dotenv.config({ path: "../../.env" });
 const coinMarketCapData = await getCoinMarketCapData("USD");
 const krakenData = await main();
 
-console.log(await aggregate());
-
-// now i need to make json with fields to save to db
+// console.log(await aggregate());
 
 async function aggregate() {
     const aggregatedData = {}

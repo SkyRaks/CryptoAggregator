@@ -54,13 +54,14 @@ async function getFields(coinData, quote_currency) {
 
         marketModel[symbol] = {};
 
+        marketModel[symbol]['exchange'] = "coinmarketcap"
+        marketModel[symbol]['base_currency'] = symbol;
         marketModel[symbol]['quote_currency'] = quote_currency;
         const quote = coinData[coin]['quote'][quote_currency]
         marketModel[symbol]['price'] = quote['price']
         marketModel[symbol]['volume_24h'] = quote['volume_24h']
         marketModel[symbol]['percent_change_24h'] = quote['percent_change_24h']
         marketModel[symbol]['percent_change_1h'] = quote['percent_change_1h']
-        marketModel[symbol]['market'] = "coinmarketcap"
         
         // this is allmost like market Model
         //  but exchange at the end, 
