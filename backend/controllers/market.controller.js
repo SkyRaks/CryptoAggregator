@@ -17,6 +17,8 @@ export const createMarketCoin = async (req, res) => {
     }
 };
 
+// test data
+// {
 // "ADA": {
 //     "exchange": "kraken",
 //     "base_currency": "ADA",

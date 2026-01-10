@@ -28,16 +28,3 @@ export const createCoins = async (req, res) => {
         res.status(500).json({success: false, message: "server error"});
     }
 };
-
-// [
-//   [ 1, 'Bitcoin', 'BTC', 'bitcoin' ],
-//   [ 1027, 'Ethereum', 'ETH', 'ethereum' ],
-//   [ 825, 'Tether USDt', 'USDT', 'tether' ],
-//   [ 1839, 'BNB', 'BNB', 'bnb' ],
-//   [ 52, 'XRP', 'XRP', 'xrp' ],
-//   [ 3408, 'USDC', 'USDC', 'usd-coin' ],
-//   [ 5426, 'Solana', 'SOL', 'solana' ],
-//   [ 1958, 'TRON', 'TRX', 'tron' ],
-//   [ 74, 'Dogecoin', 'DOGE', 'dogecoin' ],
-//   [ 2010, 'Cardano', 'ADA', 'cardano' ]
-// ]

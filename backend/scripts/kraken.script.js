@@ -20,11 +20,9 @@ const coinNames = {
     "ADAUSD": "ADA",
 }
 
-// console.log(await main());
-
 // GET ticker: https://api.kraken.com/0/public/Ticker
 
-export async function main() {
+export async function getKrakenData(quote_currency) {
     const resp = await request({
         method: "GET",
         path: "/0/public/Ticker",
@@ -33,10 +31,10 @@ export async function main() {
 
     const data = resp['result'];
 
-    return await getFields(data);
+    return await getFields(data, quote_currency);
 }
 
-async function getFields(data) {
+async function getFields(data, quote_currency) {
     const marketModel = {}
 
     for (const [pair, coin] of Object.entries(data)) {
@@ -47,7 +45,8 @@ async function getFields(data) {
 
         marketModel[name]['base_currency'] = name;
 
-        marketModel[name]['quote_currency'] = "USD"; // for now it is hardcoded
+        // marketModel[name]['quote_currency'] = "USD"; // for now it is hardcoded
+        marketModel[name]['quote_currency'] = quote_currency; // for now it is hardcoded
 
         const price = Number(coin['a'][0]);
         marketModel[name]['price'] = price;

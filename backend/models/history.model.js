@@ -1,10 +1,6 @@
 import mongoose from "mongoose";
 
 const historySchema = new mongoose.Schema({
-    coin_id: { // id from coin model
-        type: mongoose.Schema.Types.ObjectId, ref: 'Coin',
-        required: true
-    },
     base_currency: { // BTC
         type: String,
         required: true
@@ -13,18 +9,22 @@ const historySchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    price: {
-        type: Number,
-        required: true
-    },
     max_price: {
         type: Number,
+        required: true
+    }, 
+    max_price_exchange: {
+        type: String,
         required: true
     }, 
     min_price: {
         type: Number,
         required: true
     },
+    min_price_exchange: {
+        type: String,
+        required: true
+    }
 }, {
     timestamps: true
 });
