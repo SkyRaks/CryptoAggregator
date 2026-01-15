@@ -4,12 +4,26 @@ import { getKrakenData } from './kraken.script.js';
 
 dotenv.config({ path: "../../.env" });
 
-const coinMarketCapData = await getCoinMarketCapData("USD"); // this is hardcoded to see if it works
-const krakenData = await getKrakenData("USD"); // this is hardcoded to see if it works
+// const coinMarketCapData = await getCoinMarketCapData("USD"); // this is hardcoded to see if it works
+// const krakenData = await getKrakenData("USD"); // this is hardcoded to see if it works
 
-// const exchangesData = [coinMarketCapData, krakenData] // this is example
+console.log(await history(await getData("USD")));
 
-async function history(exchangesData) { 
+const exchanges = [
+    getCoinMarketCapData,
+    getKrakenData,
+];
+
+async function getData(currency) { // this function will call all of my exchanges, and make an array that history function uses
+    // and i will use this function in aggregate function also
+    const result = Promise.all(
+        exchanges.map(fn => fn(currency))
+    );
+
+    return result
+}
+
+async function history(exchangesData) {
     const historyData = {} 
 
     for (const [symbol, data] of Object.entries(exchangesData[0])) {
@@ -36,6 +50,9 @@ async function history(exchangesData) {
 // console.log(await aggregate());
 
 async function aggregate() {
+    const coinMarketCapData = await getCoinMarketCapData("USD"); // this is hardcoded to see if it works
+    const krakenData = await getKrakenData("USD"); // this is hardcoded to see if it works
+
     const aggregatedData = {}
 
     // first, get all the fields
