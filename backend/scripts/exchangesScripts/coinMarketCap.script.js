@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import Coin from "../models/coin.model.js";
+import Coin from "../../models/coin.model.js";
 import mongoose from 'mongoose';
 
 dotenv.config({ path: "../../.env" });
@@ -63,9 +63,6 @@ async function getFields(coinData, quote_currency) {
         marketModel[symbol]['percent_change_24h'] = quote['percent_change_24h']
         marketModel[symbol]['percent_change_1h'] = quote['percent_change_1h']
         
-        // this is allmost like market Model
-        //  but exchange at the end, 
-        // and base currency is the same as symbol
     }
     await mongoose.connection.close();
 

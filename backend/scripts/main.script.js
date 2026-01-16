@@ -1,15 +1,15 @@
 import dotenv from 'dotenv';
-import { getCoinMarketCapData } from './coinMarketCap.script.js';
-import { getKrakenData } from './kraken.script.js';
+import { getCoinMarketCapData } from './exchangesScripts/coinMarketCap.script.js';
+import { getKrakenData } from './exchangesScripts/kraken.script.js';
+import { createHistoryData } from './history.script.js';
+import { createMarketData } from './market.script.js';
 
 dotenv.config({ path: "../../.env" });
 
 // const coinMarketCapData = await getCoinMarketCapData("USD"); // this is hardcoded to see if it works
 // const krakenData = await getKrakenData("USD"); // this is hardcoded to see if it works
 
-console.log(await history(await getData("USD")));
-
-const exchanges = [
+export const exchanges = [
     getCoinMarketCapData,
     getKrakenData,
 ];
@@ -23,29 +23,8 @@ async function getData(currency) { // this function will call all of my exchange
     return result
 }
 
-async function history(exchangesData) {
-    const historyData = {} 
-
-    for (const [symbol, data] of Object.entries(exchangesData[0])) {
-
-        const prices = exchangesData // this line creates array with objects that have 2 values, exchange and price
-            .map(exchangesData => exchangesData[symbol])
-            .map(coin => ({ exchange: coin.exchange, price: coin.price }));
-
-        const max = prices.reduce((a, b) => (b.price > a.price ? b : a));
-        const min = prices.reduce((a, b) => (b.price < a.price ? b : a));
-
-        historyData[symbol] = {
-            base_currency: data['base_currency'],
-            quote_currency: data['quote_currency'],
-            max_price: max.price,
-            max_price_exchange: max.exchange,
-            min_price: min.price,
-            min_price_exchange: min.exchange
-        }
-    }
-    return historyData
-}
+await createMarketData("USD");
+// await createHistoryData(await getData("USD"));
 
 // console.log(await aggregate());
 
