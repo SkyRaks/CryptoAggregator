@@ -1,12 +1,14 @@
 import History from "../models/history.model.js";
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 import dotenv from "dotenv";
+import { getData } from "./main.script.js";
 
 dotenv.config({ path: "../../.env" });
 
-export async function createHistoryData(exchangesData) { // making separate controller for this was a mistake
+export async function createHistoryData() { // USD
     // this func will be triggered by node cron, every n time (as well as market script)
-    await mongoose.connect(process.env.MONGO_URI);
+    // await mongoose.connect(process.env.MONGO_URI);
+    const exchangesData = await getData();
 
     const historyData = {} 
 
@@ -35,11 +37,11 @@ export async function createHistoryData(exchangesData) { // making separate cont
         await History.insertMany(docs, {ordered: false});
 
         console.log("history data inserted successfully!")
-        await mongoose.connection.close();
+        // await mongoose.connection.close();
     } catch (error) {
         console.log(error);
 
-        await mongoose.connection.close();
+        // await mongoose.connection.close();
         throw error;
     }
 }

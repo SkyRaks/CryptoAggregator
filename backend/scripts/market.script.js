@@ -2,19 +2,20 @@ import Market from "../models/market.model.js";
 import { exchanges } from "../scripts/main.script.js"
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import { getData } from "./main.script.js";
 
 dotenv.config({ path: "../../.env" });
 
-export async function createMarketData(currency) { // "USD"
-    // similar to history script but for market
-    const result = await Promise.all(
-        // looping through every exchange function
-        exchanges.map(fn => fn(currency))
-    );
+export async function createMarketData() { // "USD"
+    // const result = await Promise.all(
+    //     // looping through every exchange function
+    //     exchanges.map(fn => fn(currency))
+    // );
+    const exchangesData = await getData();
 
     const marketData = {};
  
-    for (const [symbol, data] of Object.entries(result[0])) {
+    for (const [symbol, data] of Object.entries(exchangesData[0])) {
         // taking every field in result array
         marketData[symbol] = { // mapping all of this as new hashmap
             exchange: data['exchange'],
@@ -28,7 +29,7 @@ export async function createMarketData(currency) { // "USD"
     }
 
     try {
-        await mongoose.connect(process.env.MONGO_URI);
+        // await mongoose.connect(process.env.MONGO_URI);
 
         const docs = Object.values(marketData);
         console.log(docs);
@@ -36,9 +37,9 @@ export async function createMarketData(currency) { // "USD"
         await Market.insertMany(docs, { ordered: false });
         console.log("market data inserted!")
 
-        await mongoose.connection.close();
+        // await mongoose.connection.close();
     } catch (error) {
-        await mongoose.connection.close();
+        // await mongoose.connection.close();
 
         console.log(error);
         throw error;
