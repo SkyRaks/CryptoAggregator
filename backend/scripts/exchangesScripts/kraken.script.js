@@ -1,9 +1,5 @@
 import { createHash, createHmac } from 'crypto';
-// import dotenv from 'dotenv';
 import { URLSearchParams } from 'url';
-
-// dotenv.config({ path: "../../.env" });
-// const privateKey = process.env.KRAKEN_PRIVATE_API_KEY;
 
 const ENVIRONMENT = "https://api.kraken.com";
 

@@ -8,33 +8,38 @@ import cron from 'node-cron';
 
 dotenv.config({ path: "../../.env" });
 
+const CURRENCY = "USD";
+
 const exchanges = [
     getCoinMarketCapData,
     getKrakenData,
 ];
 
 export async function getData() { 
-    // and i will use this function in aggregate function also
-    const currency = "USD";
-
     const result = await Promise.all(
-        exchanges.map(fn => fn(currency))
+        exchanges.map(fn => fn(CURRENCY))
     );
 
     return result;
 }
 
-// const cronExpression = "*/1 * * * *"; // every minute
+const cronExpressionEveryMinute = "*/1 * * * *"; // every minute
+const cronExpressionEvery5Minutes = "*/5 * * * *"; // every 5 minutes
 
-// const task = cron.schedule(cronExpression, async () => {
-//     const data = await getData("USD");
+let aggregateCounter = 0;
+let marketAndHistoryCounter = 0;
 
-    
-// });
+export const cronAggregate = cron.schedule(cronExpressionEveryMinute, async () => {
+    await aggregate();
 
-// task.start();
+    console.log("aggregate count: ", aggregateCounter);
+    aggregateCounter += 1;
+})
 
-// await createMarketData("USD");
-// await createHistoryData("USD");
-// console.log(await aggregate());
-// console.log(await aggregate());
+export const cronMarketAndHistory = cron.schedule(cronExpressionEvery5Minutes, async () => {
+    await createMarketData();
+    await createHistoryData();
+
+    console.log("market and history count: ", marketAndHistoryCounter);
+    marketAndHistoryCounter += 1;
+})

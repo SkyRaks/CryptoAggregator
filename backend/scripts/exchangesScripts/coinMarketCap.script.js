@@ -1,8 +1,7 @@
 import dotenv from 'dotenv';
 import Coin from "../../models/coin.model.js";
-import mongoose from 'mongoose';
 
-dotenv.config({ path: "../../.env" });
+dotenv.config({ path: "../../../CryptoAggregator/.env" });
 
 const API_KEY = process.env.COIN_MARKET_CAP_API_KEY;
 const BASE_URL = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest";
@@ -25,7 +24,8 @@ export async function getCoinMarketCapData(quote_currency) {
         })
 
         if (!res.ok) {
-            console.log(`something went wrong: ${res.status}`);
+            console.log(`something went wrong CoinMarketCap: ${res.status}`);
+            return {}; // i will handle that case properly later
         }
 
         const data = await res.json();
@@ -42,7 +42,7 @@ export async function getCoinMarketCapData(quote_currency) {
 } 
 
 async function getFields(coinData, quote_currency) {
-    await mongoose.connect(process.env.MONGO_URI)
+    // await mongoose.connect(process.env.MONGO_URI)
     const marketModel = {};
 
     for (let coin = 0; coin < coinData.length; coin++) {
@@ -64,16 +64,5 @@ async function getFields(coinData, quote_currency) {
         marketModel[symbol]['percent_change_1h'] = quote['percent_change_1h']
         
     }
-    await mongoose.connection.close();
-
     return marketModel
 }
-
-//  BTC: {
-//     quote_currency: 'USD',
-//     price: 91015.2082757619,
-//     volume_24h: 42315666878.04301,
-//     percent_change_24h: -0.2696694,
-//     percent_change_1h: -0.19849322,
-//     market: 'coinmarketcap'
-//   },
