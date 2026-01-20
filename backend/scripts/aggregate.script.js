@@ -1,6 +1,8 @@
 import { getData } from "./main.script.js";
 
-export async function aggregate() {
+// console.log(await aggregate());
+
+export async function aggregate(quote_currency) {
     
     const exchangesData = await getData();
 
@@ -26,6 +28,7 @@ export async function aggregate() {
         if (!entries.length) { continue } // it will skip missing exchanges
 
         aggregatedData[symbol] = { /// for each coin we create object, and put static values
+            exchange: "aggregated",
             base_currency: entries[0].base_currency,
             quote_currency: entries[0].quote_currency,
         }

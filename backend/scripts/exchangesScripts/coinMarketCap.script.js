@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import Coin from "../../models/coin.model.js";
+// import mongoose from 'mongoose';
 
 dotenv.config({ path: "../../../CryptoAggregator/.env" });
 

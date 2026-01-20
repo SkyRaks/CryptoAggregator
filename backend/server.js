@@ -14,8 +14,8 @@ app.use(express.json());
 
 app.use("/crypto-aggregator", coinRoutes)
 
-await cronAggregate.start();
-await cronMarketAndHistory.start();
+// await cronAggregate.start();
+// await cronMarketAndHistory.start();
 
 app.listen(PORT, () => {
     connectDB();
