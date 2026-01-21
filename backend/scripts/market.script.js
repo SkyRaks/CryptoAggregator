@@ -1,19 +1,16 @@
 import Market from "../models/market.model.js";
-import { aggregate } from "./aggregate.script.js";
 import { getData } from "./main.script.js";
 import mongoose from "mongoose";
 
+
 const CURRENCY = "USD";
 
-await createMarketData();
+// await createMarketData();
 
 export async function createMarketData() { // "USD"
-    await mongoose.connect(process.env.MONGO_URI) // for debug
+    // await mongoose.connect(process.env.MONGO_URI) // for debug
    
     const exchangesData = await getData();
-    console.log(exchangesData);
-
-    // const aggregatedData = await aggregate();
 
     const marketData = {};
 
@@ -38,13 +35,12 @@ export async function createMarketData() { // "USD"
     }
 
     try {
-
         const docs = Object.values(marketData).flat();
 
         await Market.insertMany(docs, { ordered: false });
         console.log(docs);
         console.log("market data inserted!")
-        await mongoose.connection.close();
+        // await mongoose.connection.close();
     } catch (error) {
         console.log(error);
         throw error;

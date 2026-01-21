@@ -1,4 +1,3 @@
-import dotenv from 'dotenv';
 import { getCoinMarketCapData } from './exchangesScripts/coinMarketCap.script.js';
 import { getKrakenData } from './exchangesScripts/kraken.script.js';
 import { createHistoryData } from './history.script.js';
@@ -6,7 +5,6 @@ import { createMarketData } from './market.script.js';
 import { aggregate } from './aggregate.script.js';
 import cron from 'node-cron';
 
-dotenv.config({ path: "../../.env" });
 
 const CURRENCY = "USD";
 

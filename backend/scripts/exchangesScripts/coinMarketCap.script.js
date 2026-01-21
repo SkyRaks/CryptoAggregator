@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import Coin from "../../models/coin.model.js";
-// import mongoose from 'mongoose';
+import mongoose from 'mongoose';
 
 dotenv.config({ path: "../../../CryptoAggregator/.env" });
 
@@ -11,7 +11,7 @@ const BASE_URL = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/l
 // console.log(await getCoinMarketCapData("USD")); // for debug
 
 export async function getCoinMarketCapData(quote_currency) {
-    // await mongoose.connect(process.env.MONGO_URI)
+    await mongoose.connect(process.env.MONGO_URI)
 
     const params = `?start=1&limit=15&convert=${quote_currency}`
 
@@ -34,7 +34,7 @@ export async function getCoinMarketCapData(quote_currency) {
 
         const result = await getFields(coinData, quote_currency);
 
-        // await mongoose.connection.close();
+        await mongoose.connection.close();
         return result;
     } catch (error) {
         console.log(error.status);

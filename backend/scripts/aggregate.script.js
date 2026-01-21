@@ -1,6 +1,11 @@
 import { getData } from "./main.script.js";
+import Aggregated from "../models/aggregated.model.js";
+import mongoose from "mongoose";
+import dotenv from 'dotenv';
 
-// console.log(await aggregate());
+dotenv.config({ path: "../../.env" });
+
+await aggregate("USD");
 
 export async function aggregate(quote_currency) {
     
@@ -28,7 +33,6 @@ export async function aggregate(quote_currency) {
         if (!entries.length) { continue } // it will skip missing exchanges
 
         aggregatedData[symbol] = { /// for each coin we create object, and put static values
-            exchange: "aggregated",
             base_currency: entries[0].base_currency,
             quote_currency: entries[0].quote_currency,
         }
@@ -39,5 +43,21 @@ export async function aggregate(quote_currency) {
             entries.reduce((sum, entry) => sum += entry[field], 0) / entries.length;
         }
     }
-    return aggregatedData;
+
+    try {
+        // await mongoose.connect(process.env.MONGO_URI)
+        const docs = Object.values(aggregatedData).flat()
+
+        await Aggregated.insertMany(docs, { ordered: false })
+
+        console.log(docs);
+        console.log("aggregated data inserted");
+        // await mongoose.connection.close();
+    } catch (error) {
+
+        console.log(error.status)
+        throw error;
+    }
 }
+
+
