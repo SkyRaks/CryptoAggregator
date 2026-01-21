@@ -5,9 +5,7 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: "../../.env" });
 
-await aggregate("USD");
-
-export async function aggregate(quote_currency) {
+export async function aggregate() {
     
     const exchangesData = await getData();
 
@@ -23,7 +21,7 @@ export async function aggregate(quote_currency) {
     const symbols = new Set();
 
     for (const exchange of exchangesData) {
-        Object.keys(exchange).forEach(symbol => symbols.add(symbol)); // it meand that we add keys of, not some field symbol
+        Object.keys(exchange).forEach(symbol => symbols.add(symbol)); // it mean that we add keys of, not some field symbol
     }
 
     for (const symbol of symbols) {
@@ -60,4 +58,60 @@ export async function aggregate(quote_currency) {
     }
 }
 
+await patchAggregated();
 
+async function patchAggregated() {
+
+    const exchangesData = await getData();
+
+    const aggregatedData = {}
+
+    const fields = [ // fields what we need average data
+        'price',
+        'volume_24h',
+        'percent_change_24h',
+        'percent_change_1h',
+    ];
+
+    const symbols = new Set();
+
+    for (const exchange of exchangesData) {
+        Object.keys(exchange).forEach(symbol => symbols.add(symbol)); // it mean that we add keys of, not some field symbol
+    }
+
+    for (const symbol of symbols) {
+        await mongoose.connect(process.env.MONGO_URI)
+
+        const entries = exchangesData.map(exchange => exchange[symbol]);
+
+        if (!entries.length) { continue } 
+
+        aggregatedData[symbol] = {} 
+
+        for (const field of fields) { // aggregating data
+            aggregatedData[symbol][field] = entries.reduce((sum, entry) => sum += entry[field], 0) / entries.length;
+        }
+
+        // next filter by symbol
+        const coinFilter = await Aggregated.findOne({base_currency: symbol});
+
+        if (!coinFilter) { continue } // if no coin then skip
+
+        try {
+
+            await Aggregated.updateOne( // updated those 4 fields for this coin
+                { base_currency: symbol }, 
+                { $set: aggregatedData[symbol] },
+            )
+
+            console.log("data patched!")
+        } catch (error) {
+            // await mongoose.connection.close();
+
+            console.log(error);
+            throw error;
+        }
+        
+    }
+    // await mongoose.connection.close();
+}

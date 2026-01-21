@@ -37,7 +37,7 @@ export async function createMarketData() { // "USD"
     try {
         const docs = Object.values(marketData).flat();
 
-        await Market.insertMany(docs, { ordered: false });
+        // await Market.insertMany(docs, { ordered: false });
         console.log(docs);
         console.log("market data inserted!")
         // await mongoose.connection.close();
