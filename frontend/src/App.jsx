@@ -2,8 +2,8 @@ import { Route, Routes } from "react-router-dom";
 import { useMemo, useState } from 'react'
 import { ThemeProvider, createTheme, CssBaseline, Box } from "@mui/material";
 
-
 import NavBar from './components/NavBar';
+import HomePage from './pages/HomePage';
 
 function App() {
   const [mode, setMode] = useState("light");
@@ -30,7 +30,7 @@ function App() {
         <NavBar toggleTheme={toggleTheme} mode={mode}/> 
 
         <Routes>
-          {/* <Route></Route> */}
+          <Route path="/" element={<HomePage />}></Route>
         </Routes>
 
       </Box>

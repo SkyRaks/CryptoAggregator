@@ -58,9 +58,9 @@ export async function aggregate() {
     }
 }
 
-await patchAggregated();
+// await patchAggregated();
 
-async function patchAggregated() {
+export async function patchAggregated() {
 
     const exchangesData = await getData();
 
@@ -80,7 +80,7 @@ async function patchAggregated() {
     }
 
     for (const symbol of symbols) {
-        await mongoose.connect(process.env.MONGO_URI)
+        // await mongoose.connect(process.env.MONGO_URI)
 
         const entries = exchangesData.map(exchange => exchange[symbol]);
 

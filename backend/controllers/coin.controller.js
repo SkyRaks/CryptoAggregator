@@ -1,4 +1,5 @@
 import Coin from "../models/coin.model.js";
+import Aggregated from "../models/aggregated.model.js"
 
 export const getCoins = async (req, res) => {
     try {
@@ -26,5 +27,15 @@ export const createCoins = async (req, res) => {
     } catch (error) {
         console.log("error in create object ", error.message);
         res.status(500).json({success: false, message: "server error"});
+    }
+};
+
+export const getAggregatedData = async (req, res) => {
+    try {
+        const aggregatedData = await Aggregated.find({});
+        res.status(200).json({success: true, data: aggregatedData});
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({success: false, message: error.message});
     }
 };

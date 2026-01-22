@@ -1,6 +1,9 @@
 import { AppBar, Box, Toolbar, Container, Typography, Button, IconButton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { MdOutlineLightMode, MdDarkMode } from "react-icons/md";
+import { FaHome } from "react-icons/fa";
+import { IoPersonCircle } from "react-icons/io5";
+import { Link } from 'react-router-dom';
 
 export default function ButtonAppBar({ toggleTheme, mode }) {
 
@@ -9,24 +12,22 @@ export default function ButtonAppBar({ toggleTheme, mode }) {
         <AppBar position="static">
         <Container maxWidth="md">
             <Toolbar>
-            <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-                sx={{ mr: 2 }}
-            >
-                <MenuIcon />
-            </IconButton>
-            
+
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                <Button 
-                // color="inherit"
+                {/* <Button 
+                color="inherit"
                 // component={Link}
                 // to="/"
                 >
                 Home
-                </Button>
+                </Button> */}
+                <IconButton 
+                    color="inherit"
+                    component={Link}
+                    to="/"
+                    >
+                    <FaHome size="30px"/>
+                </IconButton>
             </Typography>
 
             {/* {user !== null ?           
@@ -56,6 +57,13 @@ export default function ButtonAppBar({ toggleTheme, mode }) {
                 <IoPersonCircle size="30px"/>
                 </IconButton>
             )} */}
+
+            <IconButton 
+                color='inherit'
+
+                >
+                <IoPersonCircle size="30px"/>
+            </IconButton>
 
             <IconButton color="inherit" onClick={toggleTheme}>
                 {mode === "light" ? (<MdDarkMode size="30px"/>) : (<MdOutlineLightMode size="30px"/>)}

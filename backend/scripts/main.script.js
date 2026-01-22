@@ -28,7 +28,7 @@ let aggregateCounter = 0;
 let marketAndHistoryCounter = 0;
 
 export const cronAggregate = cron.schedule(cronExpressionEveryMinute, async () => {
-    await aggregate();
+    // await aggregate();
 
     console.log("aggregate count: ", aggregateCounter);
     aggregateCounter += 1;
