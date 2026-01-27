@@ -1,5 +1,6 @@
-import Coin from "../models/coin.model.js";
+import Coin from "../models/coin.model.js"
 import Aggregated from "../models/aggregated.model.js"
+import Market from "../models/market.model.js"
 
 export const getCoins = async (req, res) => {
     try {
@@ -30,12 +31,24 @@ export const createCoins = async (req, res) => {
     }
 };
 
-export const getAggregatedData = async (req, res) => {
+export const getExchangeData = async (req, res) => {
+    const { exchange } = req.body;
+    const normalized = exchange.toLowerCase();
+    console.log("normal: ", normalized)
+
     try {
-        const aggregatedData = await Aggregated.find({});
+        let aggregatedData;
+
+        if (normalized === "aggregated") {
+            aggregatedData = await Aggregated.find({});
+        } else {
+            aggregatedData = await Market.find({ exchange: normalized });
+        }
+
+        console.log("records found: ", aggregatedData.length)
+
         res.status(200).json({success: true, data: aggregatedData});
     } catch (error) {
-        console.log(error)
         res.status(500).json({success: false, message: error.message});
     }
 };
