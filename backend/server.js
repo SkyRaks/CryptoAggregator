@@ -5,6 +5,8 @@ import coinRoutes from './routes/aggregated.route.js';
 // import { cronAggregate, cronMarketAndHistory } from './scripts/main.script.js';
 import http from 'http';
 import { Server } from 'socket.io';
+import { getSocketData } from "./socket-service.js";
+// import { useCryptoAggregator } from "../frontend/src/actions/display.coin.js";
 
 dotenv.config({ path: "../../CryptoAggregator/.env" });
 
@@ -25,6 +27,20 @@ const io = new Server(server, { // instead of port is server
 
 io.on("connection", (socket) => {
     console.log("socket is running: ", socket.id);
+
+    socket.on("custom-event", async (exchange) => {
+        try {
+            let data = await getSocketData(exchange);
+            data = data.map(coin => ({
+                ...coin.toObject(),
+                _id: coin._id.toString()
+            }))
+
+            io.emit("display-data", data);   
+        } catch (error) {
+            throw error
+        }
+    })
 })
 
 // await cronAggregate.start();

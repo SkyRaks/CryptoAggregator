@@ -12,6 +12,10 @@ import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
+import { io } from "socket.io-client";
+
+const socket = io("http://localhost:5000")
+
 const paginationModel = { page: 0, pageSize: 5 };
 
 const exchangeOptions = ['Aggregated', 'CoinMarketCap', 'Kraken'];
@@ -42,11 +46,51 @@ const HomePage = () => {
 
 // ////////////////////////////////////////////////
 // table
-  const { coins, fetchCoins } = useCryptoAggregator();
+  // const { coins, fetchCoins } = useCryptoAggregator();
+
+  // useEffect(() => {
+  //   fetchCoins(exchangeOptions[selectedIndex].toLowerCase())
+  // }, [selectedIndex, fetchCoins])
+
+  const { coins, setCoins } = useCryptoAggregator();
 
   useEffect(() => {
-    fetchCoins(exchangeOptions[selectedIndex].toLowerCase())
-  }, [selectedIndex, fetchCoins])
+    // this will display data through socket
+    socket.on("display-data", (data) => {
+      const normalized = Object.fromEntries(
+        data.map((coin => [coin._id, coin]))
+      );
+      setCoins(normalized);
+    });
+
+    return () => {
+      socket.off("display-data");
+    };
+  }, [setCoins]);
+
+
+  // socket.on("connect", () => {
+  // })
+
+  useEffect(() => {
+    console.log("selected index: ", selectedIndex)
+    // if exchange changes, call event
+    // socket.on("connect", () => {
+    if (socket.connected) {
+      socket.emit("custom-event", 
+        exchangeOptions[selectedIndex].toLowerCase()
+      );
+    } else {
+      socket.once("connect", () => {
+        socket.emit("custom-event", 
+          exchangeOptions[selectedIndex].toLowerCase()
+        );
+      })
+    }
+    // });
+  }, [selectedIndex]);
+
+
 
   const columns = [
     { field: 'symbol', headerName: 'Symbol', width: 10 },

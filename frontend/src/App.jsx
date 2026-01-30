@@ -5,20 +5,8 @@ import { ThemeProvider, createTheme, CssBaseline, Box } from "@mui/material";
 import NavBar from './components/NavBar';
 import HomePage from './pages/HomePage';
 
-import { io } from "socket.io-client";
-// import dotenv from 'dotenv';
-
-// dotenv.config({ path: "../../CryptoAggregator/.env" });
-
-// const PORT = process.env.PORT || 5000
-
-const socket = io("http://localhost:5000")
-
-socket.on("connect", () => {
-  console.log("connnected to socket: ", socket.id);
-})
-
 function App() {
+
   const [mode, setMode] = useState("light");
 
   const theme = useMemo(

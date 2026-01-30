@@ -2,10 +2,12 @@ import { create } from "zustand";
 
 export const useCryptoAggregator = create((set) => (
     {
-        coins: [],
+        // coins: [],
+        coins: {},
         setCoins: (coins) => set({coins}),
 
         fetchCoins: async(exchange) => {
+            // http fetch
 
             try {
                 const res = await fetch("/crypto-aggregator", {

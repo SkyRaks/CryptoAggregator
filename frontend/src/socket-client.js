@@ -1,8 +1,8 @@
-import { io } from "socket.io-client";
-import dotenv from 'dotenv';
+// import { io } from "socket.io-client";
+// import dotenv from 'dotenv';
 
-dotenv.config({ path: "../../CryptoAggregator/.env" });
+// dotenv.config({ path: "../../CryptoAggregator/.env" });
 
-const PORT = process.env.PORT || 5000
+// const PORT = process.env.PORT || 5000
 
-const socket = io(`http://localhost:${PORT}`)
+// const socket = io(`http://localhost:${PORT}`)
