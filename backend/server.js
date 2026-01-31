@@ -6,7 +6,7 @@ import coinRoutes from './routes/aggregated.route.js';
 import http from 'http';
 import { Server } from 'socket.io';
 import { getSocketData } from "./socket-service.js";
-// import { useCryptoAggregator } from "../frontend/src/actions/display.coin.js";
+import userRoutes from './routes/auth.route.js';
 
 dotenv.config({ path: "../../CryptoAggregator/.env" });
 
@@ -16,6 +16,7 @@ const PORT = process.env.PORT || 5000
 app.use(express.json());
 
 app.use("/crypto-aggregator", coinRoutes)
+app.use("/user", userRoutes);
 
 export const server = http.createServer(app); // socket will attach to this server
 
