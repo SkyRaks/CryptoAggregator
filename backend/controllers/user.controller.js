@@ -29,14 +29,19 @@ export const login = async(req, res) => {
         const {email, password} = req.body;
 
         const user = await User.findOne({email});
-        if (!user) return res.staus(400).json({success: false, message: "no sich account"});
+        if (!user) return res.status(400).json({success: false, message: "no such account"});
 
-        const isMatch = bcrypt.compare(password, user.password);
+        const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({success:false, message: "incorrect password"});
 
         // JWT authorization
 
-        const accessToken = jwt.sign(req.body, process.env.ACCESS_TOKEN_SECRET);
+        const accessToken = jwt.sign(
+            {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+            }, process.env.ACCESS_TOKEN_SECRET);
 
         res.status(200).json({success: true, accessToken: accessToken});
 
@@ -46,6 +51,18 @@ export const login = async(req, res) => {
     }
 }
 
-// function authenticate(req, res, nex) {
-    //later
-// }
+export function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (token == null) return res.status(401).json({success: false, message: "no token"});
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+        if (err) return res.status(403).json({success: false, message: "token no longer valid"});
+
+        console.log("decoded: ", user);
+        req.user = user;
+        next();
+    })
+};
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5N2U1NDc5NGE0MWU0M2VlZWM3M2RlYSIsIm5hbWUiOiJvbGl2ZXIiLCJlbWFpbCI6Im9saXZlcjEyM0BtYWlsLmNvbSIsImlhdCI6MTc3MDA3OTAxMH0.8IuGRt8by2F8ap-bBIgTBW-dyq89f8YAT1ys8uO1XIg

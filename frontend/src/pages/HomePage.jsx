@@ -18,7 +18,7 @@ const socket = io("http://localhost:5000")
 
 const paginationModel = { page: 0, pageSize: 5 };
 
-const exchangeOptions = ['Aggregated', 'CoinMarketCap', 'Kraken'];
+const exchangeOptions = ['CoinMarketCap', 'Aggregated', 'Kraken'];
 
 const HomePage = () => {
 
@@ -67,10 +67,6 @@ const HomePage = () => {
       socket.off("display-data");
     };
   }, [setCoins]);
-
-
-  // socket.on("connect", () => {
-  // })
 
   useEffect(() => {
     console.log("selected index: ", selectedIndex)
