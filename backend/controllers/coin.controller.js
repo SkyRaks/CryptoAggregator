@@ -32,7 +32,7 @@ import Market from "../models/market.model.js"
 // };
 
 export const getExchangeData = async (req, res) => {
-    console.log('username: ', req.user.name);
+    // console.log('username: ', req.user.name);
 
     const { exchange } = req.body;
     const normalized = exchange.toLowerCase();

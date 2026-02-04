@@ -25,6 +25,8 @@ export const register = async(req, res) => {
 };
 
 export const login = async(req, res) => {
+    // by logging we create access token with will expire and refresh token that will not
+    // and when we logout we delete refresh token
     try {
         const {email, password} = req.body;
 
@@ -36,19 +38,71 @@ export const login = async(req, res) => {
 
         // JWT authorization
 
-        const accessToken = jwt.sign(
-            {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-            }, process.env.ACCESS_TOKEN_SECRET);
+        const authUser = { id: user._id, name: user.name, email: user.email, }
 
-        res.status(200).json({success: true, accessToken: accessToken});
+        const accessToken = generateAccessToken(authUser);
+
+        const refreshToken = generateRefreshToken(authUser);
+        user.refreshTokens.push(refreshToken);
+        await user.save(); // save refresh token to DB
+
+        // res.cookie("refreshToken", refreshToken, {
+        //     httpOnly: true, 
+        //     secure: true,
+        //     sameSite: "strict",
+        //     path: "/auth/refresh",
+        // });
+
+        res.status(200).json({success: true, accessToken: accessToken, refreshToken: refreshToken});
 
     } catch (error) {
         console.log("failed to login user")
         res.status(500).json({success: false, message: "server login error"});
     }
+}
+
+export const logout = async(req, res) => {
+    // this deleted refresh token
+    const token = req.body.refreshToken
+    const user = await User.findOne({refreshTokens: token});
+    
+    if (user) {
+        user.refreshTokens = user.refreshTokens.filter(refreshToken => refreshToken !== token)
+        await user.save();
+        res.status(204).json({success: true, message: "refresh token deleted"});
+    }
+}
+
+export const refresh = (req, res) => {
+    const token = req.body.refreshToken
+
+    if (!token) return res.status(401).json({success: false, message: "no token"});
+
+    jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, async (err, payload) =>{
+        if (err) return res.status(403).json({success: false, message: "invalid refresh token"});
+            
+        const user = await User.findById(payload.id);
+        if (!user) return res.status(403).json({success: false, message: "no such user"});
+
+        if (!user.refreshTokens.includes(token)) return res.status(403).json({success: false, message: "refresh token revoked"});
+
+        const newAccessToken = generateAccessToken(
+            { 
+                id: user._id, 
+                name: user.name, 
+                email: user.email, 
+            });
+
+        res.json({accessToken: newAccessToken});
+    })
+}
+
+function generateAccessToken(user) {
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '25s' });
+}
+
+function generateRefreshToken(user) {
+    return jwt.sign({id: user.id}, process.env.REFRESH_TOKEN_SECRET); // for now without expiration
 }
 
 export function authenticateToken(req, res, next) {
@@ -60,9 +114,7 @@ export function authenticateToken(req, res, next) {
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
         if (err) return res.status(403).json({success: false, message: "token no longer valid"});
 
-        console.log("decoded: ", user);
         req.user = user;
         next();
     })
 };
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5N2U1NDc5NGE0MWU0M2VlZWM3M2RlYSIsIm5hbWUiOiJvbGl2ZXIiLCJlbWFpbCI6Im9saXZlcjEyM0BtYWlsLmNvbSIsImlhdCI6MTc3MDA3OTAxMH0.8IuGRt8by2F8ap-bBIgTBW-dyq89f8YAT1ys8uO1XIg
