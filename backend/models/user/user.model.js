@@ -16,8 +16,10 @@ const userSchema = new mongoose.Schema({
     refreshTokens: [String], 
     favorites: [
         {
-            type: mongoose.Schema.ObjectId,
-            ref: "UserCoin",
+            // type: mongoose.Schema.ObjectId,
+            // ref: "UserCoin",
+            symbol: { type: String, required: true },
+            exchange: { type: String, required: true },
         }
     ]
 }, {

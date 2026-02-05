@@ -1,6 +1,7 @@
 // import Coin from "../models/coin.model.js"
 import Aggregated from "../models/aggregated.model.js"
 import Market from "../models/market.model.js"
+import User from "../models/user/user.model.js";
 
 // export const getCoins = async (req, res) => {
 //     try {
@@ -32,7 +33,7 @@ import Market from "../models/market.model.js"
 // };
 
 export const getExchangeData = async (req, res) => {
-    // console.log('username: ', req.user.name);
+    // console.log('username: ', req.user.id);
 
     const { exchange } = req.body;
     const normalized = exchange.toLowerCase();
@@ -53,5 +54,28 @@ export const getExchangeData = async (req, res) => {
         res.status(500).json({success: false, message: error.message});
     }
 };
+
+export const addFavorite = async (req, res) => {
+    // next add if cases
+    const userId = req.user.id;
+    const {symbol, exchange} = req.body;
+
+    try {
+        const user = await User.findById(userId);
+        
+        const alreadyExists = user.favorites.some(coin => coin.symbol === symbol && coin.exchange === exchange)
+
+        if (alreadyExists) return res.status(409).json({success: false, message: "coin already exists"});
+
+        let newFav = {symbol, exchange};
+
+        user.favorites.push(newFav);
+
+        await user.save();
+        res.status(201).json({success: true, data: newFav});
+    } catch (error) {
+        res.status(500).json({success: false, message: error.message});
+    }
+}
 
 // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9saXZlcjEyM0BtYWlsLmNvbSIsInBhc3N3b3JkIjoib2xpdmVyMTIzIiwiaWF0IjoxNzcwMDc0MjU4fQ.-yoZxaekJeoANQEUyqhyohNKMjUp0e3-4KNOWwZ6Q5o
