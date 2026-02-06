@@ -9,6 +9,9 @@ export default defineConfig({ // will need to manage this stuff later
     proxy: {
       "/crypto-aggregator": {
         target: "http://localhost:5000",
+      },
+      "/user": {
+        target: "http://localhost:5000",
       }
     }
   }

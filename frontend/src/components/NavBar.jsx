@@ -60,7 +60,8 @@ export default function ButtonAppBar({ toggleTheme, mode }) {
 
             <IconButton 
                 color='inherit'
-
+                component={Link}
+                to="/signup"
                 >
                 <IoPersonCircle size="30px"/>
             </IconButton>

@@ -4,6 +4,8 @@ import { ThemeProvider, createTheme, CssBaseline, Box } from "@mui/material";
 
 import NavBar from './components/NavBar';
 import HomePage from './pages/HomePage';
+import SignUpPage from "./pages/auth/SignUpPage";
+import LoginPage from "./pages/auth/LoginPage";
 
 function App() {
 
@@ -32,6 +34,8 @@ function App() {
 
         <Routes>
           <Route path="/" element={<HomePage />}></Route>
+          <Route path="/signup" element={<SignUpPage />}></Route>
+          <Route path="/login" element={<LoginPage />}></Route>
         </Routes>
 
       </Box>
