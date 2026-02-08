@@ -2,6 +2,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import { useCryptoAggregator } from "../actions/display.coin";
 import { useEffect, useState, Fragment, useRef } from 'react';
+import {Link} from "react-router-dom";
 
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -11,8 +12,12 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import Typography from '@mui/material/Typography';
+import {Link as MuiLink} from "@mui/material";
 
 import { io } from "socket.io-client";
+import Container from '@mui/material/Container';
+import { userAuth } from '../actions/user.auth';
 
 const socket = io("http://localhost:5000")
 
@@ -21,6 +26,7 @@ const paginationModel = { page: 0, pageSize: 5 };
 const exchangeOptions = ['CoinMarketCap', 'Aggregated', 'Kraken'];
 
 const HomePage = () => {
+  const user = userAuth((state) => state.accessToken);
 
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
@@ -70,8 +76,6 @@ const HomePage = () => {
 
   useEffect(() => {
     console.log("selected index: ", selectedIndex)
-    // if exchange changes, call event
-    // socket.on("connect", () => {
     if (socket.connected) {
       socket.emit("custom-event", 
         exchangeOptions[selectedIndex].toLowerCase()
@@ -83,7 +87,6 @@ const HomePage = () => {
         );
       })
     }
-    // });
   }, [selectedIndex]);
 
 
@@ -106,7 +109,9 @@ const HomePage = () => {
   }));
 
   return (
-    <Fragment>
+    <Container>
+      {user !== null ? (
+        <Fragment>
 
     <ButtonGroup
         variant="contained"
@@ -175,6 +180,26 @@ const HomePage = () => {
       />
     </Paper>
     </Fragment>
+      ) : (
+        // <h1>hello</h1>
+        <Typography
+          variant='h6'
+          textAlign={"center"}
+          fontWeight={"bold"}
+          color='text.secondary'
+        >
+          You are not logged in, {" "}
+          <MuiLink 
+            component={Link}
+            to="/login"
+            sx={{ textDecoration: "none", "&:hover": { textDecoration: "underline" } }}
+          >
+            log in
+          </MuiLink>
+        </Typography>
+      )}
+    
+    </Container>
   );
 }
 
