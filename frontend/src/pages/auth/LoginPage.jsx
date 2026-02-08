@@ -1,10 +1,20 @@
 import { Container, Box, TextField, Button, Typography, Paper, Stack, Snackbar, Alert, Link as MuiLink } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useState } from "react";
-// import { useUserStore } from "../store/user";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { userAuth } from "../../actions/user.auth.js";
 
 const LoginPage = () => {
+  const accessToken = userAuth((state) => state.accessToken);
+  const refreshToken = userAuth((state) => state.refreshToken);
+
+  useEffect(() => {
+    console.log("access token: ", accessToken);
+  }, [accessToken]);
+
+  useEffect(() => {
+    console.log("refresh token: ", refreshToken);
+  }, [refreshToken]);
 
     const [snackbar, setSnackbar] = useState({
         open: false,
@@ -17,7 +27,7 @@ const LoginPage = () => {
         password: "",
     });
 
-    // const { loginUser } = useUserStore();
+    const { loginUser } = userAuth();
 
     const navigate = useNavigate();
 
@@ -27,12 +37,19 @@ const LoginPage = () => {
             return;
         }
 
-        const { success, message } = await loginUser(user);
+        const { success, message } = await loginUser({email: user.email, password: user.password});
 
         console.log("success: ", success);
         console.log("message: ", message);
 
-        navigate("/");
+        console.log(accessToken);
+        console.log(refreshToken);
+
+        if (success) {
+          navigate("/");
+        } else {
+          setSnackbar({ open: true, message: message, severity: "error", });
+        }
     }
 
     return (

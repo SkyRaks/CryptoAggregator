@@ -10,7 +10,7 @@ export async function getSocketData(exchange) {
     } else {
         data = await Market.find({ exchange: normalized });
     }
-    console.log(data);
+    // console.log(data);
     
     return data;
 }

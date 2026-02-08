@@ -26,7 +26,7 @@ const paginationModel = { page: 0, pageSize: 5 };
 const exchangeOptions = ['CoinMarketCap', 'Aggregated', 'Kraken'];
 
 const HomePage = () => {
-  const user = userAuth((state) => state.accessToken);
+  const accessToken = userAuth((state) => state.accessToken);
 
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
@@ -75,7 +75,7 @@ const HomePage = () => {
   }, [setCoins]);
 
   useEffect(() => {
-    console.log("selected index: ", selectedIndex)
+    // console.log("selected index: ", selectedIndex)
     if (socket.connected) {
       socket.emit("custom-event", 
         exchangeOptions[selectedIndex].toLowerCase()
@@ -110,7 +110,7 @@ const HomePage = () => {
 
   return (
     <Container>
-      {user !== null ? (
+      {accessToken !== null ? (
         <Fragment>
 
     <ButtonGroup
