@@ -12,8 +12,10 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { IoIosAddCircle } from "react-icons/io";
 import Typography from '@mui/material/Typography';
-import {Link as MuiLink} from "@mui/material";
+import {IconButton, Link as MuiLink} from "@mui/material";
+import { Box } from "@mui/material";
 
 import { io } from "socket.io-client";
 import Container from '@mui/material/Container';
@@ -27,6 +29,19 @@ const exchangeOptions = ['CoinMarketCap', 'Aggregated', 'Kraken'];
 
 const HomePage = () => {
   const accessToken = userAuth((state) => state.accessToken);
+
+  const { addFavorite } = useCryptoAggregator();
+
+  const handleAddFavorite = (symbol) => {
+    const exchange = exchangeOptions[selectedIndex].toLowerCase();
+
+    if (!symbol || !exchange) {
+      console.log("empty fields")
+    } else {
+      addFavorite(symbol, exchange);
+    }
+
+  }
 
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
@@ -97,6 +112,18 @@ const HomePage = () => {
     { field: 'volume', headerName: 'Volume', type: 'number', width: 90, },
     { field: 'percent24h', headerName: '%24h', type: 'number', width: 90, },
     { field: 'percent1h', headerName: '%1h', type: 'number', width: 90, },
+    { field: 'action', 
+      headerName: "Favorite", 
+      width: 100, 
+      // sortable: false, 
+      // filterable: false, 
+      renderCell: (params) => (
+        <IconButton
+        sx={{color: "#ffee33"}}
+        onClick={() => {handleAddFavorite(params.row.symbol)}}>
+          <IoIosAddCircle />
+        </IconButton>
+    )},
   ];
 
   const rows = Object.values(coins).map(coin => ({ 
@@ -112,8 +139,12 @@ const HomePage = () => {
     <Container>
       {accessToken !== null ? (
         <Fragment>
+    
+    <Box textAlign="center">
 
-    <ButtonGroup
+      <ButtonGroup
+        sx={{margin: "15px"}}
+        color='favorite'
         variant="contained"
         ref={anchorRef}
         aria-label="Button group with a nested menu"
@@ -131,6 +162,9 @@ const HomePage = () => {
           <ArrowDropDownIcon />
         </Button>
       </ButtonGroup>
+
+    </Box>
+
       <Popper
         sx={{ zIndex: 1 }}
         open={open}
@@ -153,7 +187,6 @@ const HomePage = () => {
                   {exchangeOptions.map((option, index) => (
                     <MenuItem
                       key={option}
-                      // disabled={index === 2} 
                       selected={index === selectedIndex}
                       onClick={(event) => handleMenuItemClick(event, index)}
                     >
@@ -169,19 +202,20 @@ const HomePage = () => {
 
 
     {/* table */}
+
     <Paper sx={{ height: 400, width: '100%' }}>
       <DataGrid
         rows={rows}
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
-        checkboxSelection
+        disableRowSelectionOnClick
         sx={{ border: 0 }}
       />
     </Paper>
+
     </Fragment>
       ) : (
-        // <h1>hello</h1>
         <Typography
           variant='h6'
           textAlign={"center"}

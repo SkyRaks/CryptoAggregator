@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { userAuth } from "./user.auth";
 
 export const useCryptoAggregator = create((set) => (
     {
@@ -22,6 +23,27 @@ export const useCryptoAggregator = create((set) => (
                 set({coins: result.data});   
             } catch (error) {
                 console.error("fetch failed", error);
+            }
+        },
+
+        addFavorite: async(symbol, exchange) => {
+
+            try {
+                const accessToken = userAuth.getState().accessToken;
+                
+                await fetch("/crypto-aggregator/add-favorite", {
+                    method: "POST",
+                    // headers: {
+                    //     "Content-type": "application/json"
+                    // },
+                    headers: {
+                        "Content-type": "application/json",
+                        "Authorization": `Bearer ${accessToken}`
+                    },
+                    body:JSON.stringify({symbol, exchange})
+                });
+            } catch (error) {
+                console.error("add favorite failed", error);
             }
         },
     }

@@ -16,6 +16,10 @@ function App() {
       createTheme({
         palette:{
           mode,
+          favorite: {
+            main: "#ffee33",
+            contrastText: "#000",
+          }
         },
       }),
     [mode]
