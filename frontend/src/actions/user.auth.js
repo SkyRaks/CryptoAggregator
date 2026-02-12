@@ -4,9 +4,11 @@ export const userAuth = create((set) => (
     {
         accessToken: null,
         user: {},
+        favoriteCoins: [],
 
         setAccessToken: (accessToken) => set({accessToken}),
         setUser: (user) => set({user}),
+        setFavoriteCoins: (favoriteCoins) => set({favoriteCoins}),
 
         createUser: async (newUser) => {
             if (!newUser.name || !newUser.email || !newUser.password) {
@@ -52,6 +54,8 @@ export const userAuth = create((set) => (
             }
 
             set({accessToken: data.accessToken});
+
+            set({favoriteCoins: data.favoriteCoins});
 
             return {success: true, message: "you've been logged in"};
         }

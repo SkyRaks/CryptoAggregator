@@ -30,7 +30,7 @@ const io = new Server(server, { // instead of port is server
 })
 
 io.on("connection", (socket) => {
-    console.log("socket is running: ", socket.id);
+    // console.log("socket is running: ", socket.id);
 
     socket.on("custom-event", async (exchange) => {
         try {

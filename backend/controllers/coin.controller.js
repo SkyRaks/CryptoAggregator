@@ -76,6 +76,31 @@ export const addFavorite = async (req, res) => {
     } catch (error) {
         res.status(500).json({success: false, message: error.message});
     }
-}
+};
 
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9saXZlcjEyM0BtYWlsLmNvbSIsInBhc3N3b3JkIjoib2xpdmVyMTIzIiwiaWF0IjoxNzcwMDc0MjU4fQ.-yoZxaekJeoANQEUyqhyohNKMjUp0e3-4KNOWwZ6Q5o
+export const removeFavorite = async (req, res) => {
+    const userId = req.user.id;
+    const {symbol, exchange} = req.body;
+
+    try {
+        if (!symbol || !exchange) res.status(400).json({success: false, message: "insuffisient fields"});
+
+        const user = await User.findById(userId);
+
+        let coinToRemove = null;
+
+        for (let i = 0; i < user.favorites.length; i++) {
+            if (user.favorites[i].symbol === symbol && user.favorites[i].exchange === exchange) {
+                coinToRemove = user.favorites[i]._id;
+                break;
+            }
+        }
+
+        user.favorites.remove(coinToRemove);
+        await user.save();
+        
+        res.status(200).json({success: true, message: "coin removed"});
+    } catch (error) {
+        res.status(404).json({success: false, message: error.message});
+    }
+}

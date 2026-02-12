@@ -46,5 +46,22 @@ export const useCryptoAggregator = create((set) => (
                 console.error("add favorite failed", error);
             }
         },
+
+        removeFavorite: async(symbol, exchange) => {
+            try {
+                const accessToken = userAuth.getState().accessToken;
+
+                await fetch("/crypto-aggregator/remove-favorite", {
+                    method: "DELETE",
+                    headers: {
+                        "Content-type": "application/json",
+                        "Authorization": `Bearer ${accessToken}`
+                    },
+                    body:JSON.stringify({symbol, exchange})
+                });
+            } catch (error) {
+                console.error("remove favorite failed", error);
+            }
+        }
     }
 ))

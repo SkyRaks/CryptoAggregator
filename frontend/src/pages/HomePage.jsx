@@ -13,6 +13,7 @@ import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { IoIosAddCircle } from "react-icons/io";
+import { IoIosRemoveCircle } from "react-icons/io";
 import Typography from '@mui/material/Typography';
 import {IconButton, Link as MuiLink} from "@mui/material";
 import { Box } from "@mui/material";
@@ -30,7 +31,10 @@ const exchangeOptions = ['CoinMarketCap', 'Aggregated', 'Kraken'];
 const HomePage = () => {
   const accessToken = userAuth((state) => state.accessToken);
 
-  const { addFavorite } = useCryptoAggregator();
+  const favoriteCoins = userAuth((state) => state.favoriteCoins);
+  console.log(favoriteCoins);
+
+  const { addFavorite, removeFavorite } = useCryptoAggregator();
 
   const handleAddFavorite = (symbol) => {
     const exchange = exchangeOptions[selectedIndex].toLowerCase();
@@ -40,7 +44,16 @@ const HomePage = () => {
     } else {
       addFavorite(symbol, exchange);
     }
+  }
 
+  const handleRemoveFavorite = (symbol) => {
+    const exchange = exchangeOptions[selectedIndex].toLowerCase();
+
+    if (!symbol || !exchange) {
+      console.log("empty fields");
+    } else {
+      removeFavorite(symbol, exchange);
+    }
   }
 
   const [open, setOpen] = useState(false);
@@ -103,7 +116,9 @@ const HomePage = () => {
       })
     }
   }, [selectedIndex]);
-
+//   const numbers = [2, 5, 8, 1, 4];
+// const isBiggerThan10 = numbers.some(element => element > 10);
+// console.log(isBiggerThan10); // Output: false 
 
 
   const columns = [
@@ -117,13 +132,25 @@ const HomePage = () => {
       width: 100, 
       // sortable: false, 
       // filterable: false, 
-      renderCell: (params) => (
+      renderCell: (params) => {
+        // if (favoriteCoins.contains(params.row.symbol) && favoriteCoins.contains(exchangeOptions[selectedIndex].toLowerCase()))
+        const exchange = exchangeOptions[selectedIndex].toLowerCase();
+        const isFav = favoriteCoins.some(element => element.symbol === params.row.symbol && element.exchange === exchange);
+        console.log(isFav);
+
+        return (
         <IconButton
-        sx={{color: "#ffee33"}}
-        onClick={() => {handleAddFavorite(params.row.symbol)}}>
-          <IoIosAddCircle />
+        sx={{color: isFav ? "#ff1744" : "#ffee33"}} // handleRemoveFavorite
+        onClick={() => { 
+          isFav ? 
+          handleRemoveFavorite(params.row.symbol)
+          :
+          handleAddFavorite(params.row.symbol)
+          }}>
+          { isFav ? <IoIosRemoveCircle /> : <IoIosAddCircle />}
         </IconButton>
-    )},
+        )
+    }}
   ];
 
   const rows = Object.values(coins).map(coin => ({ 

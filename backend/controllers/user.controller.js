@@ -56,7 +56,9 @@ export const login = async(req, res) => {
             path: "/user/refresh",
         });
 
-        res.status(200).json({success: true, accessToken: accessToken});
+        const favoriteCoins = user.favorites;
+
+        res.status(200).json({success: true, accessToken: accessToken, favoriteCoins: favoriteCoins});
 
     } catch (error) {
         console.log("failed to login user")
@@ -103,7 +105,7 @@ export const refresh = async (req, res) => {
 }
 
 function generateAccessToken(user) {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '25s' });
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' });
 }
 
 function generateRefreshToken(user) {
