@@ -6,6 +6,7 @@ import NavBar from './components/NavBar';
 import HomePage from './pages/HomePage';
 import SignUpPage from "./pages/auth/SignUpPage";
 import LoginPage from "./pages/auth/LoginPage";
+import ProfilePage from "./pages/ProfilePage";
 
 import { userAuth } from "./actions/user.auth";
 
@@ -14,6 +15,8 @@ function App() {
   const [mode, setMode] = useState("light");
 
   const setAccessToken = userAuth((state) => (state.setAccessToken));
+
+  const setFavoriteCoins = userAuth((state) => (state.setFavoriteCoins));
 
   useEffect(() => { // when page renders (or refresh) it gets access token
     const refreshAccessToken = async () => {
@@ -28,6 +31,7 @@ function App() {
 
         if (data.success) {
           setAccessToken(data.accessToken);
+          setFavoriteCoins(data.favoriteCoins);
         }
       } catch (error) {
         console.log("refresh error");
@@ -65,6 +69,7 @@ function App() {
           <Route path="/" element={<HomePage />}></Route>
           <Route path="/signup" element={<SignUpPage />}></Route>
           <Route path="/login" element={<LoginPage />}></Route>
+          <Route path="/profile" element={<ProfilePage />}></Route>
         </Routes>
 
       </Box>

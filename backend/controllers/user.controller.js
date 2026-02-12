@@ -98,7 +98,9 @@ export const refresh = async (req, res) => {
                 email: user.email, 
             });
 
-        res.status(201).json({success: true, accessToken: newAccessToken});   
+        const favoriteCoins = user.favorites;
+
+        res.status(201).json({success: true, accessToken: newAccessToken, favoriteCoins: favoriteCoins});
     } catch (error) {
         res.status(403).json({success: false, message: "invalid refresh token"});
     }

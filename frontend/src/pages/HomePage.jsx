@@ -1,7 +1,7 @@
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import { useCryptoAggregator } from "../actions/display.coin";
-import { useEffect, useState, Fragment, useRef } from 'react';
+import { useEffect, useState, Fragment, useRef, useMemo } from 'react';
 import {Link} from "react-router-dom";
 
 import Button from '@mui/material/Button';
@@ -32,7 +32,6 @@ const HomePage = () => {
   const accessToken = userAuth((state) => state.accessToken);
 
   const favoriteCoins = userAuth((state) => state.favoriteCoins);
-  console.log(favoriteCoins);
 
   const { addFavorite, removeFavorite } = useCryptoAggregator();
 
@@ -87,6 +86,7 @@ const HomePage = () => {
   // }, [selectedIndex, fetchCoins])
 
   const { coins, setCoins } = useCryptoAggregator();
+  console.log(coins);
 
   useEffect(() => {
     // this will display data through socket
@@ -121,7 +121,7 @@ const HomePage = () => {
 // console.log(isBiggerThan10); // Output: false 
 
 
-  const columns = [
+  const columns = useMemo(() => [
     { field: 'symbol', headerName: 'Symbol', width: 10 },
     { field: 'price', headerName: 'Price', type: 'number', width: 90, },
     { field: 'volume', headerName: 'Volume', type: 'number', width: 90, },
@@ -133,14 +133,12 @@ const HomePage = () => {
       // sortable: false, 
       // filterable: false, 
       renderCell: (params) => {
-        // if (favoriteCoins.contains(params.row.symbol) && favoriteCoins.contains(exchangeOptions[selectedIndex].toLowerCase()))
         const exchange = exchangeOptions[selectedIndex].toLowerCase();
         const isFav = favoriteCoins.some(element => element.symbol === params.row.symbol && element.exchange === exchange);
-        console.log(isFav);
 
         return (
         <IconButton
-        sx={{color: isFav ? "#ff1744" : "#ffee33"}} // handleRemoveFavorite
+        sx={{color: isFav ? "#ff1744" : "#ffee33"}}
         onClick={() => { 
           isFav ? 
           handleRemoveFavorite(params.row.symbol)
@@ -150,8 +148,9 @@ const HomePage = () => {
           { isFav ? <IoIosRemoveCircle /> : <IoIosAddCircle />}
         </IconButton>
         )
-    }}
-  ];
+      }
+    }
+  ]);
 
   const rows = Object.values(coins).map(coin => ({ 
     id: coin._id,

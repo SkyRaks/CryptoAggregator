@@ -27,15 +27,11 @@ export const useCryptoAggregator = create((set) => (
         },
 
         addFavorite: async(symbol, exchange) => {
-
             try {
                 const accessToken = userAuth.getState().accessToken;
                 
                 await fetch("/crypto-aggregator/add-favorite", {
                     method: "POST",
-                    // headers: {
-                    //     "Content-type": "application/json"
-                    // },
                     headers: {
                         "Content-type": "application/json",
                         "Authorization": `Bearer ${accessToken}`
@@ -43,7 +39,7 @@ export const useCryptoAggregator = create((set) => (
                     body:JSON.stringify({symbol, exchange})
                 });
             } catch (error) {
-                console.error("add favorite failed", error);
+                console.error("add favorite failed", error.message);
             }
         },
 
