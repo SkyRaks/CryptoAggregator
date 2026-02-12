@@ -6,15 +6,14 @@ import { userAuth } from "../../actions/user.auth.js";
 
 const LoginPage = () => {
   const accessToken = userAuth((state) => state.accessToken);
-  const refreshToken = userAuth((state) => state.refreshToken);
 
   useEffect(() => {
     console.log("access token: ", accessToken);
   }, [accessToken]);
 
-  useEffect(() => {
-    console.log("refresh token: ", refreshToken);
-  }, [refreshToken]);
+  // useEffect(() => {
+  //   console.log("refresh token: ", refreshToken);
+  // }, [refreshToken]);
 
     const [snackbar, setSnackbar] = useState({
         open: false,
@@ -41,9 +40,6 @@ const LoginPage = () => {
 
         console.log("success: ", success);
         console.log("message: ", message);
-
-        console.log(accessToken);
-        console.log(refreshToken);
 
         if (success) {
           navigate("/");

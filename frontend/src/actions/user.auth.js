@@ -3,7 +3,6 @@ import { create } from "zustand";
 export const userAuth = create((set) => (
     {
         accessToken: null,
-        refreshToken: null,
         user: {},
 
         setAccessToken: (accessToken) => set({accessToken}),
@@ -52,7 +51,7 @@ export const userAuth = create((set) => (
                 return {success: false, message: data.message};
             }
 
-            set({accessToken: data.accessToken, refreshToken: data.refreshToken});
+            set({accessToken: data.accessToken});
 
             return {success: true, message: "you've been logged in"};
         }

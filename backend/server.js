@@ -7,6 +7,7 @@ import http from 'http';
 import { Server } from 'socket.io';
 import { getSocketData } from "./socket-service.js";
 import userRoutes from './routes/auth.route.js';
+import cookieParser from 'cookie-parser';
 
 dotenv.config({ path: "../../CryptoAggregator/.env" });
 
@@ -14,6 +15,8 @@ const app = express();
 const PORT = process.env.PORT || 5000
 
 app.use(express.json());
+
+app.use(cookieParser());
 
 app.use("/crypto-aggregator", coinRoutes)
 app.use("/user", userRoutes);

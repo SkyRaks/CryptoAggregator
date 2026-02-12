@@ -49,14 +49,14 @@ export const login = async(req, res) => {
         user.refreshTokens.push(refreshToken);
         await user.save(); // save refresh token to DB
 
-        // res.cookie("refreshToken", refreshToken, {
-        //     httpOnly: true, 
-        //     secure: true,
-        //     sameSite: "strict",
-        //     path: "/auth/refresh",
-        // });
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true, 
+            secure: false,
+            sameSite: "strict",
+            path: "/user/refresh",
+        });
 
-        res.status(200).json({success: true, accessToken: accessToken, refreshToken: refreshToken});
+        res.status(200).json({success: true, accessToken: accessToken});
 
     } catch (error) {
         console.log("failed to login user")
@@ -76,14 +76,14 @@ export const logout = async(req, res) => {
     }
 }
 
-export const refresh = (req, res) => {
-    const token = req.body.refreshToken
+export const refresh = async (req, res) => {
+    try {
+        const token = req.cookies.refreshToken
 
-    if (!token) return res.status(401).json({success: false, message: "no token"});
+        if (!token) return res.status(401).json({success: false, message: "no token"});
 
-    jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, async (err, payload) =>{
-        if (err) return res.status(403).json({success: false, message: "invalid refresh token"});
-            
+        const payload = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+
         const user = await User.findById(payload.id);
         if (!user) return res.status(403).json({success: false, message: "no such user"});
 
@@ -96,8 +96,10 @@ export const refresh = (req, res) => {
                 email: user.email, 
             });
 
-        res.json({accessToken: newAccessToken});
-    })
+        res.status(201).json({success: true, accessToken: newAccessToken});   
+    } catch (error) {
+        res.status(403).json({success: false, message: "invalid refresh token"});
+    }
 }
 
 function generateAccessToken(user) {

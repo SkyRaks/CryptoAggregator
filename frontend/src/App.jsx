@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ThemeProvider, createTheme, CssBaseline, Box } from "@mui/material";
 
 import NavBar from './components/NavBar';
@@ -7,9 +7,34 @@ import HomePage from './pages/HomePage';
 import SignUpPage from "./pages/auth/SignUpPage";
 import LoginPage from "./pages/auth/LoginPage";
 
+import { userAuth } from "./actions/user.auth";
+
 function App() {
 
   const [mode, setMode] = useState("light");
+
+  const setAccessToken = userAuth((state) => (state.setAccessToken));
+
+  useEffect(() => { // when page renders (or refresh) it gets access token
+    const refreshAccessToken = async () => {
+
+      try {
+        const res = await fetch("/user/refresh", {
+          method: "POST",
+          credentials: "include",
+        })
+
+        const data = await res.json();
+
+        if (data.success) {
+          setAccessToken(data.accessToken);
+        }
+      } catch (error) {
+        console.log("refresh error");
+      }
+    };
+    refreshAccessToken();
+  }, [])
 
   const theme = useMemo(
     () =>
