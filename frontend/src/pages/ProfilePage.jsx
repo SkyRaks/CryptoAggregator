@@ -8,9 +8,7 @@ const ProfilePage = () => {
 
     const accessToken = ((state) => (state.accessToken));
 
-    const favoriteCoins = userAuth((state) => state.favoriteCoins);
-
-    const { removeFavorite } = useCryptoAggregator();
+    const { favoriteData, setFavoriteData } = useCryptoAggregator();
 
     // const columns = useMemo(() => [
     //     { field: 'exchange', headerName: 'Exchange', width: 10 },

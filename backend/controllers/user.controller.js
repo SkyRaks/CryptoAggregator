@@ -79,13 +79,6 @@ export const logout = async(req, res) => {
         
         user.refreshTokens = user.refreshTokens.filter(refreshToken => refreshToken !== token)
 
-        // res.cookie("refreshToken", refreshToken, {
-        //     httpOnly: true, 
-        //     secure: false,
-        //     sameSite: "strict",
-        //     path: "/user",
-        // });
-
         res.cookie("refreshToken", "", {
             httpOnly: true, 
             secure: false,
@@ -130,7 +123,7 @@ export const refresh = async (req, res) => {
 }
 
 function generateAccessToken(user) {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' });
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' });
 }
 
 function generateRefreshToken(user) {
@@ -145,7 +138,7 @@ export function authenticateToken(req, res, next) {
 
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
         if (err) return res.status(403).json({success: false, message: "token no longer valid"});
-
+        
         req.user = user;
         next();
     })

@@ -30,17 +30,27 @@ const io = new Server(server, { // instead of port is server
 })
 
 io.on("connection", (socket) => {
-    // console.log("socket is running: ", socket.id);
+    console.log(socket.handshake.auth);
 
     socket.on("custom-event", async (exchange) => {
         try {
             let data = await getSocketData(exchange);
+
             data = data.map(coin => ({
                 ...coin.toObject(),
                 _id: coin._id.toString()
             }))
 
             io.emit("display-data", data);   
+        } catch (error) {
+            throw error
+        }
+    })
+
+    socket.on("profile-event", async () => {
+        try {
+            let data = await getSocketFavoriteData();
+            
         } catch (error) {
             throw error
         }

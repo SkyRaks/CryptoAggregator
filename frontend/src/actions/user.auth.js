@@ -5,10 +5,12 @@ export const userAuth = create((set) => (
         accessToken: null,
         user: {},
         favoriteCoins: [],
+        favoriteData: [],
 
         setAccessToken: (accessToken) => set({accessToken}),
         setUser: (user) => set({user}),
         setFavoriteCoins: (favoriteCoins) => set({favoriteCoins}),
+        setFavoriteData: (favoriteData) => set({favoriteData}),
 
         createUser: async (newUser) => {
             if (!newUser.name || !newUser.email || !newUser.password) {

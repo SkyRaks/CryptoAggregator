@@ -14,3 +14,7 @@ export async function getSocketData(exchange) {
     
     return data;
 }
+
+// export async function getFavoriteSocketData() {
+
+// }

@@ -10,7 +10,8 @@ import { useState } from 'react';
 import { Fragment } from 'react';
 
 export default function ButtonAppBar({ toggleTheme, mode }) {
-    // const accessToken = userAuth((state) => state.accessToken);
+    const accessToken = userAuth((state) => state.accessToken);
+
     const setAccessToken = userAuth((state) => state.setAccessToken);
 
     // logout alert dialog
@@ -76,21 +77,26 @@ export default function ButtonAppBar({ toggleTheme, mode }) {
                     </IconButton>
                 </Typography>
 
-                <IconButton 
-                // change it to link to profile page later
-                    color='inherit'
-                    component={Link}
-                    to="/signup"
-                    >
-                    <IoPersonCircle size="30px"/>
-                </IconButton>
+                {accessToken !== null ? (
+                    <Fragment>
+                        <IconButton 
+                        // change it to link to profile page later
+                            color='inherit'
+                            component={Link}
+                            to="/profile"
+                            >
+                            <IoPersonCircle size="30px"/>
+                        </IconButton>
 
-                <IconButton
-                    color='inherit'
-                    onClick={handleOpen}
-                    >
-                    <MdLogout />
-                </IconButton>
+                        <IconButton
+                            color='inherit'
+                            onClick={handleOpen}
+                            >
+                            <MdLogout />
+                        </IconButton>
+
+                    </Fragment>
+                ): null}
 
                 <IconButton color="inherit" onClick={toggleTheme}>
                     {mode === "light" ? (<MdDarkMode size="30px"/>) : (<MdOutlineLightMode size="30px"/>)}
