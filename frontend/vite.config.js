@@ -12,6 +12,7 @@ export default defineConfig({ // will need to manage this stuff later
       },
       "/user": {
         target: "http://localhost:5000",
+        // changeOrigin: true,
       }
     }
   }

@@ -58,6 +58,6 @@ export const userAuth = create((set) => (
             set({favoriteCoins: data.favoriteCoins});
 
             return {success: true, message: "you've been logged in"};
-        }
+        },
     }
 ))

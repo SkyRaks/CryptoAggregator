@@ -53,7 +53,7 @@ export const login = async(req, res) => {
             httpOnly: true, 
             secure: false,
             sameSite: "strict",
-            path: "/user/refresh",
+            path: "/user",
         });
 
         const favoriteCoins = user.favorites;
@@ -67,14 +67,37 @@ export const login = async(req, res) => {
 }
 
 export const logout = async(req, res) => {
-    // this deleted refresh token
-    const token = req.body.refreshToken
-    const user = await User.findOne({refreshTokens: token});
-    
-    if (user) {
+    try {
+        // this deleted refresh token
+        const token = req.cookies.refreshToken
+
+        if (!token) return res.status(401).json({success: false, message: "no refreshToken"});
+
+        const user = await User.findOne({refreshTokens: token});
+
+        if (!user) return res.status(404).json({success: false, message: "user not found"});
+        
         user.refreshTokens = user.refreshTokens.filter(refreshToken => refreshToken !== token)
+
+        // res.cookie("refreshToken", refreshToken, {
+        //     httpOnly: true, 
+        //     secure: false,
+        //     sameSite: "strict",
+        //     path: "/user",
+        // });
+
+        res.cookie("refreshToken", "", {
+            httpOnly: true, 
+            secure: false,
+            sameSite: "strict",
+            path: "/user",
+            expires: new Date(0),
+        })
+
         await user.save();
-        res.status(204).json({success: true, message: "refresh token deleted"});
+        res.status(200).json({success: true, message: "refresh token deleted"});
+    } catch (error) {
+        res.status(500).json({suceess: false, message: error.message});
     }
 }
 

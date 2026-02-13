@@ -86,7 +86,6 @@ const HomePage = () => {
   // }, [selectedIndex, fetchCoins])
 
   const { coins, setCoins } = useCryptoAggregator();
-  console.log(coins);
 
   useEffect(() => {
     // this will display data through socket
