@@ -31,7 +31,8 @@ const io = new Server(server, { // instead of port is server
 })
 
 io.on("connection", (socket) => {
-    // console.log('accessToken: ', socket.handshake.auth.token);
+    console.log("socket connected: ", socket.id);
+    console.log('accessToken: ', socket.handshake.auth.token);
     // authenticate token for socket
     try {
         const accessToken = socket.handshake.auth.token;
@@ -67,6 +68,7 @@ io.on("connection", (socket) => {
     })
 
     socket.on("profile-event", async () => {
+        console.log("profile event check")
         try {
             const userId = socket.user.id
             console.log(userId);

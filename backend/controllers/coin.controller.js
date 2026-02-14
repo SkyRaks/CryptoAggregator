@@ -33,6 +33,7 @@ import User from "../models/user/user.model.js";
 // };
 
 export const getExchangeData = async (req, res) => {
+    // used when render
     // console.log('username: ', req.user.id);
 
     const { exchange } = req.body;
@@ -106,7 +107,7 @@ export const removeFavorite = async (req, res) => {
 };
 
 export const getFavoriteData = async (req, res) => {
-    // NOT USED
+    // used when render
     const userId = req.user.id;
 
     try {
