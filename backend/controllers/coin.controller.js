@@ -47,7 +47,7 @@ export const getExchangeData = async (req, res) => {
             aggregatedData = await Market.find({ exchange: normalized });
         }
 
-        console.log("records found: ", aggregatedData.length)
+        // console.log("records found: ", aggregatedData.length)
 
         res.status(200).json({success: true, data: aggregatedData});
     } catch (error) {
@@ -106,6 +106,7 @@ export const removeFavorite = async (req, res) => {
 };
 
 export const getFavoriteData = async (req, res) => {
+    // NOT USED
     const userId = req.user.id;
 
     try {
@@ -128,7 +129,7 @@ export const getFavoriteData = async (req, res) => {
 
             favoriteData.push(item[0])
         }
-        console.log("my favorite data: ", favoriteData);    
+        // console.log("my favorite data: ", favoriteData);    
         
         res.status(200).json({success: true, data: favoriteData});
     } catch (error) {

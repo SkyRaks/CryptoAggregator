@@ -22,14 +22,14 @@ import { io } from "socket.io-client";
 import Container from '@mui/material/Container';
 import { userAuth } from '../actions/user.auth';
 
-const socket = io("http://localhost:5000")
+const socket = io("http://localhost:5000", {autoConnect: false}) // create socket connection
 
 const paginationModel = { page: 0, pageSize: 5 };
 
 const exchangeOptions = ['CoinMarketCap', 'Aggregated', 'Kraken'];
 
 const HomePage = () => {
-  const accessToken = userAuth((state) => state.accessToken);
+  const accessToken = userAuth((state) => state.accessToken); 
 
   const favoriteCoins = userAuth((state) => state.favoriteCoins);
 
@@ -88,7 +88,17 @@ const HomePage = () => {
   const { coins, setCoins } = useCryptoAggregator();
 
   useEffect(() => {
+    // attach accessToken and connect
+    if (!accessToken) {
+      return;
+    }
+    socket.auth = {token: accessToken};
+    socket.connect();
+  }, [accessToken])
+
+  useEffect(() => {
     // this will display data through socket
+    // listening for data
     socket.on("display-data", (data) => {
       const normalized = Object.fromEntries(
         data.map((coin => [coin._id, coin]))
@@ -102,6 +112,7 @@ const HomePage = () => {
   }, [setCoins]);
 
   useEffect(() => {
+    // talk to server, ask for data
     // console.log("selected index: ", selectedIndex)
     if (socket.connected) {
       socket.emit("custom-event", 
