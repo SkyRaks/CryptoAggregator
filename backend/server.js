@@ -5,7 +5,7 @@ import coinRoutes from './routes/aggregated.route.js';
 // import { cronAggregate, cronMarketAndHistory } from './scripts/main.script.js';
 import http from 'http';
 import { Server } from 'socket.io';
-import { getSocketData } from "./socket-service.js";
+import { getSocketData, getFavoriteSocketData } from "./socket-service.js";
 import userRoutes from './routes/auth.route.js';
 import cookieParser from 'cookie-parser';
 import jwt from "jsonwebtoken";;
@@ -31,8 +31,6 @@ const io = new Server(server, { // instead of port is server
 })
 
 io.on("connection", (socket) => {
-    console.log("socket connected: ", socket.id);
-    console.log('accessToken: ', socket.handshake.auth.token);
     // authenticate token for socket
     try {
         const accessToken = socket.handshake.auth.token;
@@ -52,7 +50,8 @@ io.on("connection", (socket) => {
         socket.disconnect();
     }
 
-    socket.on("custom-event", async (exchange) => {
+    socket.on("home-event", async (exchange) => {
+        // console.log(socket.user.id);
         try {
             let data = await getSocketData(exchange);
 
@@ -61,24 +60,22 @@ io.on("connection", (socket) => {
                 _id: coin._id.toString()
             }))
 
-            io.emit("display-data", data);   
+            socket.emit("display-data", data);   
         } catch (error) {
             throw error
         }
     })
 
     socket.on("profile-event", async () => {
-        console.log("profile event check")
         try {
             const userId = socket.user.id
-            console.log(userId);
 
-            let data = await getSocketFavoriteData(userId);
-            console.log(data);
+            let data = await getFavoriteSocketData(userId);
 
             socket.emit("profile-data", data);
         } catch (error) {
-            throw error
+            socket.emit("profile-data", error.message);
+            // console.log("profile event error");
         }
     })
 })
@@ -86,7 +83,7 @@ io.on("connection", (socket) => {
 // await cronAggregate.start();
 // await cronMarketAndHistory.start();
 
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
     connectDB();
     console.log("server started at: http://localhost:" + PORT);
 });

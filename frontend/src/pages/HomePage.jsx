@@ -115,21 +115,17 @@ const HomePage = () => {
     // talk to server, ask for data
     // console.log("selected index: ", selectedIndex)
     if (socket.connected) {
-      socket.emit("custom-event", 
+      socket.emit("home-event", 
         exchangeOptions[selectedIndex].toLowerCase()
       );
     } else {
       socket.once("connect", () => {
-        socket.emit("custom-event", 
+        socket.emit("home-event", 
           exchangeOptions[selectedIndex].toLowerCase()
         );
       })
     }
   }, [selectedIndex]);
-//   const numbers = [2, 5, 8, 1, 4];
-// const isBiggerThan10 = numbers.some(element => element > 10);
-// console.log(isBiggerThan10); // Output: false 
-
 
   const columns = useMemo(() => [
     { field: 'symbol', headerName: 'Symbol', width: 10 },

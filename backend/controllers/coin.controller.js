@@ -2,6 +2,7 @@
 import Aggregated from "../models/aggregated.model.js"
 import Market from "../models/market.model.js"
 import User from "../models/user/user.model.js";
+import { getFavoriteSocketData } from "../socket-service.js";
 
 // export const getCoins = async (req, res) => {
 //     try {
@@ -108,30 +109,8 @@ export const removeFavorite = async (req, res) => {
 
 export const getFavoriteData = async (req, res) => {
     // used when render
-    const userId = req.user.id;
-
     try {
-        const user = await User.findById(userId);
-
-        if (!user) return res.status(404).json({success: false, message: "user not found"});
-
-        const favoriteList = user.favorites;
-
-        let favoriteData = []; // put favorite data here
-
-        for ( let i = 0; i < favoriteList.length; i++) {
-            let item;
-
-            if (favoriteList[i].exchange === "aggregated") {
-                item = await Aggregated.find({base_currency: favoriteList[i].symbol});
-            } else {
-                item = await Market.find({base_currency: favoriteList[i].symbol});
-            }
-
-            favoriteData.push(item[0])
-        }
-        // console.log("my favorite data: ", favoriteData);    
-        
+        const favoriteData = await getFavoriteSocketData(req.user.id)
         res.status(200).json({success: true, data: favoriteData});
     } catch (error) {
         res.status(500).json({success: false, message: error.message});

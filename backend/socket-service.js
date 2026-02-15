@@ -11,7 +11,6 @@ export async function getSocketData(exchange) {
     } else {
         data = await Market.find({ exchange: normalized });
     }
-    // console.log(data);
     
     return data;
 }
@@ -32,7 +31,7 @@ export async function getFavoriteSocketData(userId) {
             } else {
                 item = await Market.find({base_currency: favoriteList[i].symbol});
             }
-            favoriteData.push(item[0]);
+            if (item) favoriteData.push(item[0]);
         }
         
         return favoriteData;

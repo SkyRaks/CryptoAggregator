@@ -6,108 +6,88 @@ import { useCryptoAggregator } from '../actions/display.coin';
 import { userAuth } from '../actions/user.auth';
 import { io } from "socket.io-client";
 
-// const profileSocket = io("http://localhost:5000", {
-//     // create socket connection
-//     autoConnect: false,
-// })
+// create socket connection
+let profileSocket = io("http://localhost:5000", {autoConnect: false})
 
 const ProfilePage = () => {
 
-    // const accessToken = userAuth((state) => state.accessToken);
+    const accessToken = userAuth((state) => state.accessToken);
 
-    // const { favoriteData, setFavoriteData } = useCryptoAggregator(); // my full favorite data
+    const { favoriteData, setFavoriteData } = userAuth(); // my full favorite data
 
-    // useEffect(() => {
-    //     // attach accessToken and connect
-    //     if (!accessToken) return;
+    useEffect(() => {
+        // attach accessToken and connect
+        if (!accessToken) return;
 
-    //     const profileSocket = io("http://localhost:5000", {autoConnect: false});
-    //     profileSocket.auth = {token: accessToken}
+        profileSocket = io("http://localhost:5000", {autoConnect: false});
+        profileSocket.auth = {token: accessToken}
 
-    //     const emitProfileEvent = () => profileSocket.emit("profile-event")
+        const handleProfileData = (data) => {
+            const normalized = Object.fromEntries(
+                data.map((coin) => [coin._id, coin])
+            );
+            console.log(normalized);
+            setFavoriteData(normalized);
 
-    //     profileSocket.once("connect", emitProfileEvent);
+            // if (!data || !Array.isArray(data)) return;
+            // const normalized = Object.fromEntries(data.map((coin) => [coin._id, coin]));
+            // setFavoriteData(normalized);
+        }
 
-    //     const handleProfileData = (data) => {
-    //         // const normalized = Object.fromEntries(
-    //         //     data.map((coin) => [coin._id, coin])
-    //         // );
-    //         // setFavoriteData(normalized);
+        profileSocket.on("profile-data", handleProfileData);
 
-    //         if (!data || !Array.isArray(data)) return;
-    //         const normalized = Object.fromEntries(data.map((coin) => [coin._id, coin]));
-    //         setFavoriteData(normalized);
-    //     }
+        profileSocket.connect();
+        profileSocket.emit("profile-event");
 
-    //     profileSocket.on("profile-data", handleProfileData);
-
-    //     profileSocket.connect();
-
-    //     return () => {
-    //         profileSocket.disconnect();
-    //         profileSocket.off("profile-data", handleProfileData);
+        return () => {
+            profileSocket.disconnect();
+            profileSocket.off("profile-data", handleProfileData);
     //         profileSocket.off("connect", emitProfileEvent);
-    //     };
-    // }, [accessToken, setFavoriteData]);
+        };
+    }, [accessToken, setFavoriteData]);
 
-    // useEffect(() => {
-    //     // socket listener
-    //     const handleProfileData = (data) => {
-    //         const normalized = Object.fromEntries(
-    //             data.map((coin) => [coin._id, coin])
-    //         );
-    //         setFavoriteData(normalized);
-    //     }
-    //     profileSocket.on("profile-data", handleProfileData);
+// //     CLIENT
+// //   emit("profile-event") ─────────▶ SERVER
+// //                                    |
+// //                                    | fetch data
+// //                                    ▼
+// //   CLIENT ◀──────── emit("profile-data")
 
-    //     return () => {
-    //         profileSocket.off("profile-data", handleProfileData);
-    //     };
-    // }, [setFavoriteData]);
+    const columns = useMemo(() => [
+        { field: 'exchange', headerName: 'Exchange', width: 10 },
+        { field: 'symbol', headerName: 'Symbol', width: 10 },
+        { field: 'price', headerName: 'Price', type: 'number', width: 90, },
+        { field: 'volume', headerName: 'Volume', type: 'number', width: 90, },
+        { field: 'percent24h', headerName: '%24h', type: 'number', width: 90, },
+        { field: 'percent1h', headerName: '%1h', type: 'number', width: 90, },
+        { field: 'action', headerName: "action"} 
+    ], []);
+    console.log(favoriteData);
 
-//     CLIENT
-//   emit("profile-event") ─────────▶ SERVER
-//                                    |
-//                                    | fetch data
-//                                    ▼
-//   CLIENT ◀──────── emit("profile-data")
+    const rows = Object.values(favoriteData || {}).map(coin => ({ 
+        id: coin._id,
+        exchange: coin.exchange,
+        symbol: coin.base_currency, 
+        price: coin.price, 
+        volume: coin.volume_24h, 
+        percent24h: coin.percent_change_24h,
+        percent1h: coin.percent_change_1h, 
+    }));
 
-    // const columns = useMemo(() => [
-    //     { field: 'exchange', headerName: 'Exchange', width: 10 },
-    //     { field: 'symbol', headerName: 'Symbol', width: 10 },
-    //     { field: 'price', headerName: 'Price', type: 'number', width: 90, },
-    //     { field: 'volume', headerName: 'Volume', type: 'number', width: 90, },
-    //     { field: 'percent24h', headerName: '%24h', type: 'number', width: 90, },
-    //     { field: 'percent1h', headerName: '%1h', type: 'number', width: 90, },
-    //     { field: 'action', headerName: "action"} 
-    // ]);
-    // console.log(favoriteData);
-
-    // const rows = favoriteData ? Object.values(favoriteData).map(coin => ({ 
-    //     id: coin._id,
-    //     exchange: coin.exchange,
-    //     symbol: coin.base_currency, 
-    //     price: coin.price, 
-    //     volume: coin.volume_24h, 
-    //     percent24h: coin.percent_change_24h,
-    //     percent1h: coin.percent_change_1h, 
-    // })) : [];
-
-    // const paginationModel = { page: 0, pageSize: 5 };
+    const paginationModel = { page: 0, pageSize: 5 };
 
     return (
         <Container>
-            <h3>nothing</h3>
-            {/* <Paper sx={{ height: 400, width: '100%' }}>
+            <Paper sx={{ height: 400, width: '100%' }}>
                 <DataGrid
                     rows={rows}
                     columns={columns}
                     initialState={{ pagination: { paginationModel } }}
-                    pageSizeOptions={[5, 10]}
+                    // pageSizeOptions={[5, 10]}
                     checkboxSelection
-                    sx={{ border: 0 }}
+                    // sx={{ border: 0 }}
                 />
-            </Paper> */}
+            </Paper>
         </Container>
     );
 }
