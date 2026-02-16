@@ -3,7 +3,6 @@ import { getData } from "./main.script.js";
 
 export async function createHistoryData() { // USD
     // this func will be triggered by node cron, every n time (as well as market script)
-    // await mongoose.connect(process.env.MONGO_URI);
     const exchangesData = await getData();
 
     const historyData = {} 
@@ -31,7 +30,6 @@ export async function createHistoryData() { // USD
         const docs = Object.values(historyData);
 
         await History.insertMany(docs, {ordered: false});
-
         console.log("history data inserted successfully!")
     } catch (error) {
         console.log(error);

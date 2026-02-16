@@ -1,12 +1,8 @@
 import { getData } from "./main.script.js";
 import Aggregated from "../models/aggregated.model.js";
 import mongoose from "mongoose";
-import dotenv from 'dotenv';
-
-dotenv.config({ path: "../../.env" });
 
 export async function aggregate() {
-    
     const exchangesData = await getData();
 
     const aggregatedData = {}
@@ -43,29 +39,30 @@ export async function aggregate() {
     }
 
     try {
-        // await mongoose.connect(process.env.MONGO_URI)
         const docs = Object.values(aggregatedData).flat()
 
         await Aggregated.insertMany(docs, { ordered: false })
 
-        console.log(docs);
+        // console.log(docs);
         console.log("aggregated data inserted");
-        // await mongoose.connection.close();
     } catch (error) {
-
         console.log(error.status)
         throw error;
     }
 }
 
 // await patchAggregated();
+console.log("mogno ready state: ", mongoose.connection.readyState);
 
 export async function patchAggregated() {
+    if (mongoose.connection.readyState !== 1) {
+        console.log("mongo not connected");
+        return;
+    }
 
     const exchangesData = await getData();
 
     const aggregatedData = {}
-
     const fields = [ // fields what we need average data
         'price',
         'volume_24h',
@@ -80,8 +77,6 @@ export async function patchAggregated() {
     }
 
     for (const symbol of symbols) {
-        // await mongoose.connect(process.env.MONGO_URI)
-
         const entries = exchangesData.map(exchange => exchange[symbol]);
 
         if (!entries.length) { continue } 
@@ -106,12 +101,8 @@ export async function patchAggregated() {
 
             console.log("data patched!")
         } catch (error) {
-            // await mongoose.connection.close();
-
             console.log(error);
             throw error;
         }
-        
     }
-    // await mongoose.connection.close();
 }

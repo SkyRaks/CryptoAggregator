@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
 import coinRoutes from './routes/aggregated.route.js';
-// import { cronAggregate, cronMarketAndHistory } from './scripts/main.script.js';
+import { cronAggregate } from './scripts/main.script.js';
 import http from 'http';
 import { Server } from 'socket.io';
 import { getSocketData, getFavoriteSocketData } from "./socket-service.js";
@@ -11,6 +11,8 @@ import cookieParser from 'cookie-parser';
 import jwt from "jsonwebtoken";;
 
 dotenv.config({ path: "../../CryptoAggregator/.env" });
+
+await connectDB();
 
 const app = express();
 const PORT = process.env.PORT || 5000
@@ -80,10 +82,16 @@ io.on("connection", (socket) => {
     })
 })
 
+// const cronAggregate = createCronAggregate();
+
+// cronAggregate.task();
+cronAggregate.start();
+
 // await cronAggregate.start();
 // await cronMarketAndHistory.start();
 
+
 server.listen(PORT, "0.0.0.0", () => {
-    connectDB();
+    // connectDB();
     console.log("server started at: http://localhost:" + PORT);
 });
