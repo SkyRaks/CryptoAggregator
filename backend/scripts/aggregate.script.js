@@ -55,10 +55,10 @@ export async function aggregate() {
 console.log("mogno ready state: ", mongoose.connection.readyState);
 
 export async function patchAggregated() {
-    if (mongoose.connection.readyState !== 1) {
-        console.log("mongo not connected");
-        return;
-    }
+    // if (mongoose.connection.readyState !== 1) {
+    //     console.log("mongo not connected");
+    //     return;
+    // }
 
     const exchangesData = await getData();
 
@@ -87,6 +87,10 @@ export async function patchAggregated() {
             aggregatedData[symbol][field] = entries.reduce((sum, entry) => sum += entry[field], 0) / entries.length;
         }
 
+        if (mongoose.connection.readyState !== 1) {
+            await mongoose.connect(process.env.MONGO_URI)
+            console.log("check");
+        }
         // next filter by symbol
         const coinFilter = await Aggregated.findOne({base_currency: symbol});
 

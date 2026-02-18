@@ -21,19 +21,20 @@ export async function getData() {
     return result;
 }
 
-const cronExpressionEvery3Minutes = "*/3 * * * *"; // every 3 minutes
+const cronExpressionEvery3Minutes = "*/1 * * * *"; // every 3 minutes
 const cronExpressionEvery10Minutes = "*/10 * * * *"; // every 5 minutes
 
 let aggregateCounter = 1;
 let marketAndHistoryCounter = 1;
 
-async function isMongoConnected() {
-    if (mongoose.connection.readyState !== 1) {
-        console.log("mongo not connected")
-        await mongoose.connect(process.env.MONGO_URI)
-        console.log("mongo connected")
-    }
-}
+// async function isMongoConnected() {
+//     console.log("is mongo check!", mongoose.connection.readyState);
+//     if (mongoose.connection.readyState !== 1) {
+//         console.log("mongo not connected")
+//         await mongoose.connect(process.env.MONGO_URI)
+//         console.log("mongo connected")
+//     }
+// }
 
 // export function createCronAggregate() {
 //     let aggregatedRunning = false;
@@ -61,7 +62,7 @@ export const cronAggregate = cron.schedule(cronExpressionEvery3Minutes,
     async () => {
 
     console.log("cronAggregateCheck")
-    await isMongoConnected();
+    // await isMongoConnected();
     await patchAggregated();
 
     console.log("aggregate count: ", aggregateCounter);
