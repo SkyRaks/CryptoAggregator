@@ -43,7 +43,6 @@ export async function aggregate() {
 
         await Aggregated.insertMany(docs, { ordered: false })
 
-        // console.log(docs);
         console.log("aggregated data inserted");
     } catch (error) {
         console.log(error.status)
@@ -51,15 +50,8 @@ export async function aggregate() {
     }
 }
 
-// await patchAggregated();
-console.log("mogno ready state: ", mongoose.connection.readyState);
-
 export async function patchAggregated() {
-    // if (mongoose.connection.readyState !== 1) {
-    //     console.log("mongo not connected");
-    //     return;
-    // }
-
+    console.log("patchAggregated trigger")
     const exchangesData = await getData();
 
     const aggregatedData = {}
@@ -76,6 +68,10 @@ export async function patchAggregated() {
         Object.keys(exchange).forEach(symbol => symbols.add(symbol)); // it mean that we add keys of, not some field symbol
     }
 
+    if (mongoose.connection.readyState !== 1) { // check if mongoDB idling
+        await mongoose.connect(process.env.MONGO_URI)
+    }
+
     for (const symbol of symbols) {
         const entries = exchangesData.map(exchange => exchange[symbol]);
 
@@ -87,10 +83,6 @@ export async function patchAggregated() {
             aggregatedData[symbol][field] = entries.reduce((sum, entry) => sum += entry[field], 0) / entries.length;
         }
 
-        if (mongoose.connection.readyState !== 1) {
-            await mongoose.connect(process.env.MONGO_URI)
-            console.log("check");
-        }
         // next filter by symbol
         const coinFilter = await Aggregated.findOne({base_currency: symbol});
 
@@ -103,7 +95,7 @@ export async function patchAggregated() {
                 { $set: aggregatedData[symbol] },
             )
 
-            console.log("data patched!")
+            console.log("data patched!", symbol)
         } catch (error) {
             console.log(error);
             throw error;

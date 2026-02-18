@@ -2,9 +2,8 @@ import { getCoinMarketCapData } from './exchangesScripts/coinMarketCap.script.js
 import { getKrakenData } from './exchangesScripts/kraken.script.js';
 import { createHistoryData } from './history.script.js';
 import { createMarketData } from './market.script.js';
-import { aggregate, patchAggregated } from './aggregate.script.js';
+import { patchAggregated } from './aggregate.script.js';
 import cron from 'node-cron';
-import mongoose from 'mongoose';
 
 const CURRENCY = "USD";
 
@@ -21,61 +20,27 @@ export async function getData() {
     return result;
 }
 
-const cronExpressionEvery3Minutes = "*/1 * * * *"; // every 3 minutes
-const cronExpressionEvery10Minutes = "*/10 * * * *"; // every 5 minutes
+const cronExpressionEveryMinute = "*/1 * * * *"; // every minute
+const cronExpressionEvery5Minutes = "*/5 * * * *"; // every 5 minutes
 
 let aggregateCounter = 1;
 let marketAndHistoryCounter = 1;
 
-// async function isMongoConnected() {
-//     console.log("is mongo check!", mongoose.connection.readyState);
-//     if (mongoose.connection.readyState !== 1) {
-//         console.log("mongo not connected")
-//         await mongoose.connect(process.env.MONGO_URI)
-//         console.log("mongo connected")
-//     }
-// }
-
-// export function createCronAggregate() {
-//     let aggregatedRunning = false;
-
-//     return cron.schedule(cronExpressionEvery3Minutes, 
-//         async () => {
-//             if (aggregatedRunning) return;
-
-//             aggregatedRunning = true;
-
-//             try {
-//                 console.log("cronAggregateCheck")
-//                 await isMongoConnected();
-//                 await patchAggregated();   
-//                 console.log("aggregate count: ", aggregateCounter);
-//                 aggregateCounter += 1;
-//             } finally {
-//                 aggregatedRunning = false;
-//             }
-//         }, {scheduled: false}
-//     )   
-// }
-
-export const cronAggregate = cron.schedule(cronExpressionEvery3Minutes, 
+export const cronAggregate = cron.schedule(cronExpressionEveryMinute, 
     async () => {
-
-    console.log("cronAggregateCheck")
-    // await isMongoConnected();
     await patchAggregated();
 
     console.log("aggregate count: ", aggregateCounter);
     aggregateCounter += 1;
-    }, {sheduled: false}
+    }, { scheduled: false }
 )
 
-export const cronMarketAndHistory = cron.schedule(cronExpressionEvery10Minutes, 
+export const cronMarketAndHistory = cron.schedule(cronExpressionEvery5Minutes,
     async () => {
     await createMarketData();
     await createHistoryData();
 
     console.log("market and history count: ", marketAndHistoryCounter);
     marketAndHistoryCounter += 1;
-    }, {scheduled: false}
+    }, { scheduled: false }
 )
