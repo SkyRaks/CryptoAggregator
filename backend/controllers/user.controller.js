@@ -41,7 +41,7 @@ export const login = async(req, res) => {
 
         // JWT authorization
 
-        const authUser = { id: user._id, name: user.name, email: user.email, }
+        const authUser = { id: user._id, name: user.name, email: user.email, phoneNumber: user.phoneNumber}
 
         const accessToken = generateAccessToken(authUser);
 

@@ -1,10 +1,11 @@
-import { Box, Container, Grid, Link as MuiLink, Stack, Typography, Paper } from '@mui/material';
+import { Box, Container, Grid, Link as MuiLink, TextField, Paper, Dialog, DialogTitle, DialogActions, DialogContent, Button } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import { useEffect, useMemo } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { Link } from "react-router-dom";
 import { useCryptoAggregator } from '../actions/display.coin';
 import { userAuth } from '../actions/user.auth';
 import { io } from "socket.io-client";
+import parsePhoneNumber from 'libphonenumber-js'
 
 // create socket connection
 let profileSocket = io("http://localhost:5000", {autoConnect: false})
@@ -13,7 +14,9 @@ const ProfilePage = () => {
 
     const accessToken = userAuth((state) => state.accessToken);
 
-    const { favoriteData, setFavoriteData } = userAuth(); // my full favorite data
+    const { user, favoriteData, setFavoriteData } = userAuth(); // my full favorite data
+    // oliver123123@mail.com
+    // idinahui123
 
     useEffect(() => {
         // attach accessToken and connect
@@ -28,10 +31,6 @@ const ProfilePage = () => {
             );
             console.log(normalized);
             setFavoriteData(normalized);
-
-            // if (!data || !Array.isArray(data)) return;
-            // const normalized = Object.fromEntries(data.map((coin) => [coin._id, coin]));
-            // setFavoriteData(normalized);
         }
 
         profileSocket.on("profile-data", handleProfileData);
@@ -42,7 +41,6 @@ const ProfilePage = () => {
         return () => {
             profileSocket.disconnect();
             profileSocket.off("profile-data", handleProfileData);
-    //         profileSocket.off("connect", emitProfileEvent);
         };
     }, [accessToken, setFavoriteData]);
 
@@ -76,19 +74,86 @@ const ProfilePage = () => {
 
     const paginationModel = { page: 0, pageSize: 5 };
 
+    // window
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => {
+        setOpen(true);
+    }
+    const handleClose = () => {
+        setOpen(false);
+    }       
+    // 
+
+    const [value, setValue] = useState("");
+    const [error, setError] = useState(false);
+
+    const handleChange = (e) => {
+        const v = e.target.value;
+        setValue(v);
+        const phone = parsePhoneNumber(v, "CA");
+        setError(!phone?.isValid());
+    };
+
+    const handleConfirm = () => {
+        if (!error && value) {
+            console.log(value);
+            handleClose();
+        }
+    };
+
     return (
-        <Container>
-            <Paper sx={{ height: 400, width: '100%' }}>
-                <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    initialState={{ pagination: { paginationModel } }}
-                    // pageSizeOptions={[5, 10]}
-                    checkboxSelection
-                    // sx={{ border: 0 }}
-                />
-            </Paper>
-        </Container>
+        <Fragment>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {"Add your phone number"}
+                </DialogTitle>
+
+                <DialogContent>
+                    <TextField 
+                        label="Phone Number"
+                        value={value}
+                        onChange={handleChange}
+                        error={error}
+                        helperText={error ? "Invalid phone number" : ""}
+                        placeholder="+1 416 555 1234"
+                        fullWidth
+                    />
+                </DialogContent>
+
+                <DialogActions>
+                    <Button >Confirm</Button>
+                    <Button onClick={handleClose}>Cancel</Button>
+                </DialogActions>
+
+            </Dialog>
+
+            <Container>
+                {!user.phoneNumber ? (
+                    <span
+                        onClick={handleOpen}
+                        style={{cursor: "pointer"}}
+                    >
+                        <h3>no number</h3>
+                    </span>
+                ) : null}
+
+                <Paper sx={{ height: 400, width: '100%' }}>
+                    <DataGrid
+                        rows={rows}
+                        columns={columns}
+                        initialState={{ pagination: { paginationModel } }}
+                        // pageSizeOptions={[5, 10]}
+                        checkboxSelection
+                        // sx={{ border: 0 }}
+                    />
+                </Paper>
+            </Container>
+        </Fragment>
     );
 }
 

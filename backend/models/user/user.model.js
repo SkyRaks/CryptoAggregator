@@ -13,6 +13,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    phoneNumber: {
+        type: String,
+        match: /^\+[1-9]\d{1,14}$/,
+        default: null,
+    },
     refreshTokens: [String], 
     favorites: [
         {
