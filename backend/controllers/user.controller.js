@@ -94,6 +94,28 @@ export const logout = async(req, res) => {
     }
 }
 
+export const addNumber = async(req, res) => {
+    const userId = req.user.id
+    const {phone} = req.body
+
+    try {
+        const user = await User.findById(userId);
+
+        if (user.phoneNumber) return res.status(409).json({success: false, message: "phone number already exists"});
+
+        try {
+            user.phoneNumber = phone;
+
+            await user.save();
+            res.status(201).json({success: true, message: "phone number added"});   
+        } catch (error) {
+            console.error("failed to save", error.message);
+        }
+    } catch (error) {
+        res.status(500).json({success: false, message: error.message});
+    }
+}
+
 export const refresh = async (req, res) => {
     try {
         const token = req.cookies.refreshToken

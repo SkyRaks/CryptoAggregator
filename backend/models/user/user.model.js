@@ -15,7 +15,8 @@ const userSchema = new mongoose.Schema({
     },
     phoneNumber: {
         type: String,
-        match: /^\+[1-9]\d{1,14}$/,
+        // match: /^\+[1-9]\d{1,14}$/,
+        match: /^\d{10}$/, // just 10 numbers
         default: null,
     },
     refreshTokens: [String], 

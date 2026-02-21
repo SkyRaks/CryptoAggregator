@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export const userAuth = create((set) => (
+export const userAuth = create((set, get) => (
     {
         accessToken: null,
         user: {},
@@ -61,5 +61,32 @@ export const userAuth = create((set) => (
 
             return {success: true, message: "you've been logged in"};
         },
+
+        addPhoneNumber: async (phone) => {
+            const accessToken = get().accessToken;
+            if (!phone) {
+                return {success: false, message: "provide phone Number"}
+            }
+
+            try {
+                const res = await fetch("/user/add-phone-number", {
+                    method: "POST",
+                    headers: {
+                        "Content-type":"application/json",
+                        "Authorization": `Bearer ${accessToken}`
+                    },
+                    body:JSON.stringify({phone}),
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    return {success: false, message: data.message};
+                }
+                return {success: true, message: data.message};   
+            } catch (error) {
+                console.error("add phone number failed", error.message);
+            }
+        }
     }
 ))

@@ -60,7 +60,6 @@ const ProfilePage = () => {
         { field: 'percent1h', headerName: '%1h', type: 'number', width: 90, },
         { field: 'action', headerName: "action"} 
     ], []);
-    console.log(favoriteData);
 
     const rows = Object.values(favoriteData || {}).map(coin => ({ 
         id: coin._id,
@@ -84,21 +83,34 @@ const ProfilePage = () => {
     }       
     // 
 
-    const [value, setValue] = useState("");
+    const [phone, setPhone] = useState("");
     const [error, setError] = useState(false);
+
+    const {addPhoneNumber} = userAuth();
+
+    // const handleChange = (e) => {
+    //     const v = e.target.value;
+    //     setPhone(v);
+
+    //     const num = parsePhoneNumber(v, "CA");
+    //     const check = num ? num.isValid() : false
+
+    //     setError(!check);
+    // };
 
     const handleChange = (e) => {
         const v = e.target.value;
-        setValue(v);
-        const phone = parsePhoneNumber(v, "CA");
-        setError(!phone?.isValid());
+        setPhone(v);
+
+        const isValid = parsePhoneNumber(v, "CA")?.isValid() ?? false;
+        setError(!isValid);
     };
 
     const handleConfirm = () => {
-        if (!error && value) {
-            console.log(value);
-            handleClose();
-        }
+        if (error || !phone) return
+        // let normalized = phone.startsWith("+") ? phone : "+" + phone;
+        addPhoneNumber(phone.toString());
+        handleClose();
     };
 
     return (
@@ -116,17 +128,22 @@ const ProfilePage = () => {
                 <DialogContent>
                     <TextField 
                         label="Phone Number"
-                        value={value}
+                        value={phone}
                         onChange={handleChange}
                         error={error}
                         helperText={error ? "Invalid phone number" : ""}
-                        placeholder="+1 416 555 1234"
+                        placeholder="123 456 7890"
                         fullWidth
+                        slotProps={{
+                            htmlInput: {
+                                maxLength: 10,
+                            }
+                        }}
                     />
                 </DialogContent>
 
                 <DialogActions>
-                    <Button >Confirm</Button>
+                    <Button onClick={handleConfirm}>Confirm</Button>
                     <Button onClick={handleClose}>Cancel</Button>
                 </DialogActions>
 
