@@ -8,7 +8,8 @@ import { Server } from 'socket.io';
 import { getSocketData, getFavoriteSocketData } from "./socket-service.js";
 import userRoutes from './routes/auth.route.js';
 import cookieParser from 'cookie-parser';
-import jwt from "jsonwebtoken";;
+import jwt from "jsonwebtoken";
+import { cronAlert } from './queues/alert.queue.js';
 
 dotenv.config({ path: "../../CryptoAggregator/.env" });
 
@@ -84,6 +85,8 @@ io.on("connection", (socket) => {
 
 // cronAggregate.start();
 // cronMarketAndHistory.start();
+
+cronAlert.start();
 
 server.listen(PORT, "0.0.0.0", () => {
     // connectDB();
