@@ -14,9 +14,14 @@ const ProfilePage = () => {
 
     const accessToken = userAuth((state) => state.accessToken);
 
-    const { user, favoriteData, setFavoriteData } = userAuth(); // my full favorite data
+    // gotta always use selector for this \  /
+    //                                     \/
+    const user = userAuth((state) => state.user);
+    const favoriteData = userAuth((state) => state.favoriteData);
+    const setFavoriteData = userAuth((state) => state.setFavoriteData);
     // oliver123123@mail.com
     // idinahui123
+    if (user.name) console.log("user name: ", user.name);
 
     useEffect(() => {
         // attach accessToken and connect

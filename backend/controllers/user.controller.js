@@ -56,9 +56,12 @@ export const login = async(req, res) => {
             path: "/user",
         });
 
-        const favoriteCoins = user.favorites;
+        // const favoriteCoins = user.favorites;
 
-        res.status(200).json({success: true, accessToken: accessToken, favoriteCoins: favoriteCoins});
+        res.status(200).json({success: true, accessToken: accessToken, 
+            user: authUser,
+            favoriteCoins: user.favorites,
+        });
 
     } catch (error) {
         console.log("failed to login user")

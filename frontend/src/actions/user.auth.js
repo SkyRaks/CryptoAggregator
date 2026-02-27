@@ -57,6 +57,8 @@ export const userAuth = create((set, get) => (
 
             set({accessToken: data.accessToken});
 
+            set({user: data.user})
+
             set({favoriteCoins: data.favoriteCoins});
 
             return {success: true, message: "you've been logged in"};
