@@ -18,6 +18,8 @@ function App() {
 
   const setFavoriteCoins = userAuth((state) => (state.setFavoriteCoins));
 
+  const setUser = userAuth((state) => (state.setUser));
+
   useEffect(() => { // when page renders (or refresh) it gets access token
     const refreshAccessToken = async () => {
 
@@ -33,6 +35,8 @@ function App() {
         if (data.success) {
           setAccessToken(data.accessToken);
           setFavoriteCoins(data.favoriteCoins);
+          setUser(data.user);
+          
         }
       } catch (error) {
         console.log("refresh error");

@@ -1,4 +1,4 @@
-import { Box, Container, Grid, Link as MuiLink, TextField, Paper, Dialog, DialogTitle, DialogActions, DialogContent, Button } from '@mui/material';
+import { Box, Container, Grid, Link as MuiLink, TextField, Paper, Dialog, DialogTitle, DialogActions, DialogContent, Button, ButtonGroup } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import { Link } from "react-router-dom";
@@ -6,6 +6,7 @@ import { useCryptoAggregator } from '../actions/display.coin';
 import { userAuth } from '../actions/user.auth';
 import { io } from "socket.io-client";
 import parsePhoneNumber from 'libphonenumber-js'
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 // create socket connection
 let profileSocket = io("http://localhost:5000", {autoConnect: false})
@@ -21,7 +22,6 @@ const ProfilePage = () => {
     const setFavoriteData = userAuth((state) => state.setFavoriteData);
     // oliver123123@mail.com
     // idinahui123
-    if (user.name) console.log("user name: ", user.name);
 
     useEffect(() => {
         // attach accessToken and connect
@@ -119,6 +119,9 @@ const ProfilePage = () => {
     };
 
     return (
+        // <Box
+        //     sx={{mt: 3}}
+        // >
         <Fragment>
             <Dialog
                 open={open}
@@ -154,7 +157,8 @@ const ProfilePage = () => {
 
             </Dialog>
 
-            <Container>
+            <Container sx={{mt: 3}}>
+
                 {!user.phoneNumber ? (
                     <span
                         onClick={handleOpen}
@@ -164,18 +168,99 @@ const ProfilePage = () => {
                     </span>
                 ) : null}
 
-                <Paper sx={{ height: 400, width: '100%' }}>
-                    <DataGrid
-                        rows={rows}
-                        columns={columns}
-                        initialState={{ pagination: { paginationModel } }}
-                        // pageSizeOptions={[5, 10]}
-                        checkboxSelection
-                        // sx={{ border: 0 }}
-                    />
-                </Paper>
+                <Box sx={{display: "flex", gap: 2}}>
+
+                    <Box sx={{width: "75%"}}>
+                        <Paper sx={{ height: 400, width: '100%'}}>
+                            <DataGrid
+                                rows={rows}
+                                columns={columns}
+                                initialState={{ pagination: { paginationModel } }}
+                                checkboxSelection
+                            />
+                        </Paper>
+                    </Box>
+
+
+                    <Box 
+                        sx={{width: "25%",
+                            height: 350,
+                            border: '1px solid',
+                            borderWidth: 2,
+                            borderRadius: 2,
+                            // #ffee33
+                        }}
+                        textAlign="center"
+                        >
+                            <h2>Create an Alert</h2>
+                            <h4>Notify me when:</h4>
+                            <ButtonGroup
+                                sx={{margin: "15px"}}
+                                color='favorite'
+                                variant="contained"
+                                // ref={anchorRef}
+                                aria-label="Button group with a nested menu"
+                            >
+                                <Button>BTC</Button>
+                                <Button
+                                size="small"
+                                aria-controls={open ? 'split-button-menu' : undefined}
+                                aria-expanded={open ? 'true' : undefined}
+                                aria-label="select merge strategy"
+                                aria-haspopup="menu"
+                                // onClick={}
+                                >
+                                <ArrowDropDownIcon />
+                                </Button>
+                            </ButtonGroup>
+
+                            is
+
+                            <ButtonGroup
+                                sx={{margin: "15px"}}
+                                color='favorite'
+                                variant="contained"
+                                // ref={anchorRef}
+                                aria-label="Button group with a nested menu"
+                            >
+                                <Button>{'>'}</Button>
+                                <Button
+                                size="small"
+                                aria-controls={open ? 'split-button-menu' : undefined}
+                                aria-expanded={open ? 'true' : undefined}
+                                aria-label="select merge strategy"
+                                aria-haspopup="menu"
+                                // onClick={}
+                                >
+                                <ArrowDropDownIcon />
+                                </Button>
+                            </ButtonGroup>
+
+                            than
+                            <br/>
+
+                            <TextField
+                            label="Enter your amount"
+                            type="number"
+                            // onChange={(e) =>
+                            //     setUser({ ...user, email: e.target.value })
+                            // }
+                            />
+
+                            <Button 
+                                sx={{margin: "15px"}}
+                                color='favorite'
+                                variant="contained"
+                            >
+                                Create Alert
+                            </Button>
+                    </Box>
+
+                </Box>
+
             </Container>
         </Fragment>
+        // </Box>
     );
 }
 

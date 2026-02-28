@@ -141,7 +141,32 @@ export const refresh = async (req, res) => {
 
         const favoriteCoins = user.favorites;
 
-        res.status(201).json({success: true, accessToken: newAccessToken, favoriteCoins: favoriteCoins});
+        const refreshUser = {id: user._id, name: user.name, email: user.email, phoneNumber: user.phoneNumber}
+
+        res.status(201).json({success: true, accessToken: newAccessToken, user: refreshUser, favoriteCoins: favoriteCoins});
+
+        //     const authUser = { id: user._id, name: user.name, email: user.email, phoneNumber: user.phoneNumber}
+
+        // const accessToken = generateAccessToken(authUser);
+
+        // const refreshToken = generateRefreshToken(authUser);
+        // user.refreshTokens.push(refreshToken);
+        // await user.save(); // save refresh token to DB
+
+        // res.cookie("refreshToken", refreshToken, {
+        //     httpOnly: true, 
+        //     secure: false,
+        //     sameSite: "strict",
+        //     path: "/user",
+        // });
+
+        // // const favoriteCoins = user.favorites;
+
+        // res.status(200).json({success: true, accessToken: accessToken, 
+        //     user: authUser,
+        //     favoriteCoins: user.favorites,
+        // });
+
     } catch (error) {
         res.status(403).json({success: false, message: "invalid refresh token"});
     }
