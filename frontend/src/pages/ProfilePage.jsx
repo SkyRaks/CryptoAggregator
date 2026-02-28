@@ -1,6 +1,6 @@
-import { Box, Container, Grid, Link as MuiLink, TextField, Paper, Dialog, DialogTitle, DialogActions, DialogContent, Button, ButtonGroup } from '@mui/material';
+import { Box, Container, Grid, Link as MuiLink, TextField, Paper, Dialog, DialogTitle, DialogActions, DialogContent, Button, ButtonGroup, Menu, MenuItem } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import { Fragment, useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState, useRef } from 'react';
 import { Link } from "react-router-dom";
 import { useCryptoAggregator } from '../actions/display.coin';
 import { userAuth } from '../actions/user.auth';
@@ -22,6 +22,53 @@ const ProfilePage = () => {
     const setFavoriteData = userAuth((state) => state.setFavoriteData);
     // oliver123123@mail.com
     // idinahui123
+
+    const {addPhoneNumber} = userAuth();
+    const {createAlert} = useCryptoAggregator();
+
+    // for alert window
+    const coinOptions = useMemo(() => {
+        return Object.values(favoriteData).map(item => ({
+            symbol: item.base_currency,
+            exchange: !item.exchange ? "aggregated" : item.exchange,
+        }
+    ))});
+    const [selectedCoin, setSelectedCoin] = useState(null);
+
+    const signOptions = [">", "<", ">=", "<="]
+    const [selectedOption, setSelectedOption] = useState(null);
+
+    const [amount, setAmount] = useState(null);
+
+    useEffect(() => {
+        // automatically sets selected coin to index 0 if there is at all
+        if (coinOptions.length && selectedCoin === null) {
+            setSelectedCoin(0);
+        }
+    }, [selectedCoin, setSelectedCoin]);
+
+    // alert system buttons
+    const [open, setOpen] = useState(false);
+    const anchorRef = useRef(null);
+    const handleToggle = () => {
+        setOpen(prevOpen => !prevOpen);
+    };
+    const handleClose = () => {
+        setOpen(false);
+    }
+    // 
+
+    const handleMenuItem = (index) => {
+        // when click on item select it and close
+        setSelectedCoin(index);
+        setOpen(false);
+    };
+
+    const handleAlert = () => {
+        const favoriteCoinId = favoriteData[selectedCoin]._id
+        createAlert(favoriteCoinId, amount);
+        // next pop snackbar that all's good or not
+    }
 
     useEffect(() => {
         // attach accessToken and connect
@@ -68,7 +115,7 @@ const ProfilePage = () => {
 
     const rows = Object.values(favoriteData || {}).map(coin => ({ 
         id: coin._id,
-        exchange: coin.exchange,
+        exchange: !coin.exchange ? "Aggregated" : coin.exchange,
         symbol: coin.base_currency, 
         price: coin.price, 
         volume: coin.volume_24h, 
@@ -79,19 +126,17 @@ const ProfilePage = () => {
     const paginationModel = { page: 0, pageSize: 5 };
 
     // window
-    const [open, setOpen] = useState(false);
-    const handleOpen = () => {
-        setOpen(true);
+    const [openWindow, setOpenWindow] = useState(false);
+    const handleOpenWindow = () => {
+        setOpenWindow(true);
     }
-    const handleClose = () => {
-        setOpen(false);
+    const handleCloseWindow = () => {
+        setOpenWindow(false);
     }       
     // 
 
     const [phone, setPhone] = useState("");
     const [error, setError] = useState(false);
-
-    const {addPhoneNumber} = userAuth();
 
     // const handleChange = (e) => {
     //     const v = e.target.value;
@@ -115,17 +160,14 @@ const ProfilePage = () => {
         if (error || !phone) return
         // let normalized = phone.startsWith("+") ? phone : "+" + phone;
         addPhoneNumber(phone.toString());
-        handleClose();
+        handleCloseWindow();
     };
 
     return (
-        // <Box
-        //     sx={{mt: 3}}
-        // >
         <Fragment>
             <Dialog
-                open={open}
-                onClose={handleClose}
+                open={openWindow}
+                onClose={handleCloseWindow}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
@@ -152,7 +194,7 @@ const ProfilePage = () => {
 
                 <DialogActions>
                     <Button onClick={handleConfirm}>Confirm</Button>
-                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={handleCloseWindow}>Cancel</Button>
                 </DialogActions>
 
             </Dialog>
@@ -161,16 +203,17 @@ const ProfilePage = () => {
 
                 {!user.phoneNumber ? (
                     <span
-                        onClick={handleOpen}
+                        onClick={handleOpenWindow}
                         style={{cursor: "pointer"}}
                     >
-                        <h3>no number</h3>
+                        <h3>You don't have a phone number, add it to create custom Notifications
+                        </h3>
                     </span>
                 ) : null}
 
                 <Box sx={{display: "flex", gap: 2}}>
 
-                    <Box sx={{width: "75%"}}>
+                    <Box sx={{width: !user.phoneNumber ? "100%" : "75%"}}>
                         <Paper sx={{ height: 400, width: '100%'}}>
                             <DataGrid
                                 rows={rows}
@@ -181,86 +224,108 @@ const ProfilePage = () => {
                         </Paper>
                     </Box>
 
-
-                    <Box 
-                        sx={{width: "25%",
-                            height: 350,
-                            border: '1px solid',
-                            borderWidth: 2,
-                            borderRadius: 2,
-                            // #ffee33
-                        }}
-                        textAlign="center"
-                        >
-                            <h2>Create an Alert</h2>
-                            <h4>Notify me when:</h4>
-                            <ButtonGroup
-                                sx={{margin: "15px"}}
-                                color='favorite'
-                                variant="contained"
-                                // ref={anchorRef}
-                                aria-label="Button group with a nested menu"
+                    {/* alert system box */}
+                    {user.phoneNumber ? (
+                        <Box 
+                            sx={{width: "25%",
+                                height: 350,
+                                border: '1px solid',
+                                borderWidth: 2,
+                                borderRadius: 2,
+                            }}
+                            textAlign="center"
                             >
-                                <Button>BTC</Button>
-                                <Button
-                                size="small"
-                                aria-controls={open ? 'split-button-menu' : undefined}
-                                aria-expanded={open ? 'true' : undefined}
-                                aria-label="select merge strategy"
-                                aria-haspopup="menu"
-                                // onClick={}
+                                <h2>Create an Alert</h2>
+                                    Notify me when:
+                                <br />
+
+                                <Box ref={anchorRef} sx={{display: "inline-flex"}}>
+
+                                    <ButtonGroup // coin symbol
+                                        sx={{margin: "15px"}}
+                                        color='favorite'
+                                        variant="contained"
+                                        aria-label="Button group with a nested menu"
+                                    >
+                                        <Button disabled={!coinOptions.length}>
+                                            {coinOptions[selectedCoin]?.symbol ?? "Select Item"}
+                                        </Button>
+                                        <Button size="small" onClick={handleToggle}>
+                                            <ArrowDropDownIcon />
+                                        </Button>
+                                    </ButtonGroup>
+
+                                </Box>
+
+                                <Menu // for coin symbol
+                                    anchorEl={anchorRef.current}
+                                    open={open}
+                                    onClose={handleClose}
+                                    anchorOrigin={{vertical: "bottom", horizontal: "left"}}
+                                    transformOrigin={{vertical: "top", horizontal: "left"}}
                                 >
-                                <ArrowDropDownIcon />
-                                </Button>
-                            </ButtonGroup>
+                                    {coinOptions.map((option, index) => (
+                                        <MenuItem 
+                                            key={option.symbol}
+                                            selected={index === selectedCoin} 
+                                            onClick={() => handleMenuItem(index)}
+                                        >
+                                            {option.symbol} {option.exchange}
+                                        </MenuItem>
+                                    ))}
+                                </Menu>
+                                    is
 
-                            is
-
-                            <ButtonGroup
-                                sx={{margin: "15px"}}
-                                color='favorite'
-                                variant="contained"
-                                // ref={anchorRef}
-                                aria-label="Button group with a nested menu"
-                            >
-                                <Button>{'>'}</Button>
+                                <ButtonGroup // sign
+                                    sx={{margin: "15px"}}
+                                    color='favorite'
+                                    variant="contained"
+                                > 
                                 <Button
-                                size="small"
-                                aria-controls={open ? 'split-button-menu' : undefined}
-                                aria-expanded={open ? 'true' : undefined}
-                                aria-label="select merge strategy"
-                                aria-haspopup="menu"
-                                // onClick={}
+                                    onClick={() =>
+                                        setSelectedOption(
+                                            selectedOption === null ? 0 : (selectedOption + 1) % signOptions.length
+                                        )
+                                    }
                                 >
-                                <ArrowDropDownIcon />
+                                    { selectedOption === null ? ">" : signOptions[selectedOption]}
                                 </Button>
-                            </ButtonGroup>
 
-                            than
-                            <br/>
+                                </ButtonGroup>
 
-                            <TextField
-                            label="Enter your amount"
-                            type="number"
-                            // onChange={(e) =>
-                            //     setUser({ ...user, email: e.target.value })
-                            // }
-                            />
+                                    than
+                                    <br/>
 
-                            <Button 
-                                sx={{margin: "15px"}}
-                                color='favorite'
-                                variant="contained"
-                            >
-                                Create Alert
-                            </Button>
-                    </Box>
+                                <TextField
+                                    label="Enter your amount"
+                                    type="number"
+                                    sx={{margin: "10px"}}
+                                    inputProps={{ // prevents from typing '-' or 'e'
+                                        min: 0,
+                                        onKeyDown: (e) => {
+                                            if (e.key === "-" || e.key === "e") e.preventDefault();
+                                        },
+                                    }}
+                                    onChange={(e) =>
+                                        setAmount(e.key)
+                                    }
+                                />
+
+                                <Button 
+                                    sx={{margin: "10px"}}
+                                    color='favorite'
+                                    variant="contained"
+                                    onClick={handleAlert}
+                                >
+                                    Create Alert
+                                </Button>
+                        </Box>
+                    ) : null}
 
                 </Box>
 
             </Container>
         </Fragment>
-        // </Box>
     );
 }
 

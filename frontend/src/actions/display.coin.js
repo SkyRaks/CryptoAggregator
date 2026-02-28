@@ -58,6 +58,16 @@ export const useCryptoAggregator = create((set) => (
             } catch (error) {
                 console.error("remove favorite failed", error);
             }
+        },
+
+        createAlert: async(favoriteCoinId, amount) => {
+            try {
+                const accessToken = userAuth.getState().accessToken;
+
+                // await fetch("")
+            } catch (error) {
+                
+            }
         }
     }
 ))

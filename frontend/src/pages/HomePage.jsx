@@ -26,7 +26,7 @@ const socket = io("http://localhost:5000", {autoConnect: false}) // create socke
 
 const paginationModel = { page: 0, pageSize: 5 };
 
-const exchangeOptions = ['CoinMarketCap', 'Aggregated', 'Kraken'];
+const exchangeOptions = ['CoinMarketCap', 'Aggregated', 'Kraken'];  
 
 const HomePage = () => {
   const accessToken = userAuth((state) => state.accessToken); 
@@ -181,7 +181,6 @@ const HomePage = () => {
         ref={anchorRef}
         aria-label="Button group with a nested menu"
       >
-        {/* onClick={() => fetchCoins(exchangeOptions[selectedIndex])}>{exchangeOptions[selectedIndex]} */}
         <Button>{exchangeOptions[selectedIndex]}</Button>
         <Button
           size="small"
