@@ -31,12 +31,13 @@ const ProfilePage = () => {
         return Object.values(favoriteData).map(item => ({
             symbol: item.base_currency,
             exchange: !item.exchange ? "aggregated" : item.exchange,
+            coinId: item._id,
         }
     ))});
     const [selectedCoin, setSelectedCoin] = useState(null);
 
     const signOptions = [">", "<", ">=", "<="]
-    const [selectedOption, setSelectedOption] = useState(null);
+    const [selectedOption, setSelectedOption] = useState(0);
 
     const [amount, setAmount] = useState(null);
 
@@ -64,9 +65,21 @@ const ProfilePage = () => {
         setOpen(false);
     };
 
-    const handleAlert = () => {
-        const favoriteCoinId = favoriteData[selectedCoin]._id
-        createAlert(favoriteCoinId, amount);
+    const handleAlert = async () => {
+        // make a lot of checks if no fields
+        // const favoriteCoinId = coinOptions[selectedCoin].coinId;
+        const favCoinSymbol = coinOptions[selectedCoin].symbol;
+        const favCoinExchange = coinOptions[selectedCoin].exchange;
+
+        const sign = signOptions[selectedOption];
+
+        const {success} = await createAlert({favCoinSymbol, favCoinExchange, amount, sign});
+
+        if (success == true) {
+            console.log("it worked");
+        } else {
+            console.log("bruh");
+        }
         // next pop snackbar that all's good or not
     }
 
@@ -137,16 +150,6 @@ const ProfilePage = () => {
 
     const [phone, setPhone] = useState("");
     const [error, setError] = useState(false);
-
-    // const handleChange = (e) => {
-    //     const v = e.target.value;
-    //     setPhone(v);
-
-    //     const num = parsePhoneNumber(v, "CA");
-    //     const check = num ? num.isValid() : false
-
-    //     setError(!check);
-    // };
 
     const handleChange = (e) => {
         const v = e.target.value;
@@ -284,7 +287,8 @@ const ProfilePage = () => {
                                 <Button
                                     onClick={() =>
                                         setSelectedOption(
-                                            selectedOption === null ? 0 : (selectedOption + 1) % signOptions.length
+                                            // selectedOption === null ? 0 : (selectedOption + 1) % signOptions.length
+                                            (prev) => (prev + 1) % signOptions.length
                                         )
                                     }
                                 >
@@ -307,7 +311,7 @@ const ProfilePage = () => {
                                         },
                                     }}
                                     onChange={(e) =>
-                                        setAmount(e.key)
+                                        setAmount(Number(e.target.value))
                                     }
                                 />
 

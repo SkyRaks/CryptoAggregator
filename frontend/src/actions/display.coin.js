@@ -60,13 +60,27 @@ export const useCryptoAggregator = create((set) => (
             }
         },
 
-        createAlert: async(favoriteCoinId, amount) => {
+        createAlert: async({favCoinSymbol, favCoinExchange, amount, sign}) => {
             try {
                 const accessToken = userAuth.getState().accessToken;
 
-                // await fetch("")
+                const res = await fetch("/crypto-aggregator/create-alert", {
+                    method: "POST",
+                    headers: {
+                        "Content-type": "application/json",
+                        "Authorization": `Bearer ${accessToken}`
+                    },
+                    body:JSON.stringify({favCoinSymbol, favCoinExchange, amount, sign})
+                });
+                const data = await res.json();
+
+                console.log("res success: ", res.success);
+
+                if (!res.ok) return {success: false, message: data.message};
+
+                return {success: true, message: data.message};
             } catch (error) {
-                
+                console.error("create alert hook error", error.message);
             }
         }
     }

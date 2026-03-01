@@ -1,5 +1,6 @@
 // import Coin from "../models/coin.model.js"
 import Aggregated from "../models/aggregated.model.js"
+import Alert from "../models/alert.model.js";
 import Market from "../models/market.model.js"
 import User from "../models/user/user.model.js";
 import { getFavoriteSocketData } from "../socket-service.js";
@@ -112,6 +113,46 @@ export const getFavoriteData = async (req, res) => {
     try {
         const favoriteData = await getFavoriteSocketData(req.user.id)
         res.status(200).json({success: true, data: favoriteData});
+    } catch (error) {
+        res.status(500).json({success: false, message: error.message});
+    }
+}
+
+export const createAlert = async (req, res) => {    
+    // favCoinSymbol, favCoinExchange, amount, sign
+    if (!req.body.favCoinSymbol || !req.body.favCoinExchange || !req.body.amount || !req.body.sign) {
+        return res.status(400).json({success: false, message: "missing fields"});
+    }
+
+    //creates alert
+    const userId = req.user.id;
+    const {favCoinSymbol, favCoinExchange, amount, sign} = req.body;
+
+    const user = await User.findById(userId);
+
+    const favoriteData = user.favorites.find(
+        item => item.symbol.toString() === favCoinSymbol,
+        item => item.exchange.toString() === favCoinExchange
+    );
+
+    if (!favoriteData) {
+        return res.status(404).json({success: false, message: "coin not found"});
+    }
+    // 69701b07f8748a9afc3135f4
+
+    const newAlert = new Alert({
+        userId: userId,
+        coin: favoriteData.symbol,
+        exchange: favoriteData.exchange,
+        targetPrice: Number(amount),
+        comparison: sign,
+        phoneNumber: user.phoneNumber,
+        status: "pending",
+    })
+
+    try {
+        await newAlert.save();
+        res.status(201).json({success: true, data: newAlert});
     } catch (error) {
         res.status(500).json({success: false, message: error.message});
     }
