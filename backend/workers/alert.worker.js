@@ -1,9 +1,10 @@
 import { Worker, Job } from "bullmq";
-import redisConnection from "../config/redis";
+import redisConnection from "../config/redis.js";
 
-import User from "../models/user/user.model";
-import Market from "../models/market.model";
-import Alert from "../models/alert.model";
+import User from "../models/user/user.model.js";
+import Market from "../models/market.model.js";
+import Aggregated from "../models/aggregated.model.js";
+import Alert from "../models/alert.model.js";
 
 import Twilio from "twilio";
 
@@ -21,8 +22,16 @@ export const worker = new Worker("alerts",
         const coin = userAlert.coin;
         const targetPrice = userAlert.targetPrice;
         
+        console.log("before data");
         // find user's stuff
-        const data = await Market.findOne({exchange: exchange, base_currency: coin});
+        let data = null;
+
+        if (exchange.toString() === "aggregated") {
+            data = await Aggregated.findOne({base_currency: coin});
+        } else {
+            data = await Market.findOne({exchange: exchange, base_currency: coin});
+        }
+        console.log("after");
 
         let comparison = false;
         let sign = null;
@@ -56,7 +65,7 @@ export const worker = new Worker("alerts",
 
             const message = await client.messages.create({
                 body: `${data.base_currency} is ${sign} than target value. Check it out!`,
-                from: "+14444444444",
+                from: "+14179240379",
                 // later maybe will change to custom country code even though it probablly will always be +1
                 to: `+1${phoneNumber}`,
             })

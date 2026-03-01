@@ -10,6 +10,7 @@ import userRoutes from './routes/auth.route.js';
 import cookieParser from 'cookie-parser';
 import jwt from "jsonwebtoken";
 import { cronAlert } from './queues/alert.queue.js';
+import {worker} from "./workers/alert.worker.js";
 
 dotenv.config({ path: "../../CryptoAggregator/.env" });
 
