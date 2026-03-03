@@ -2,7 +2,10 @@ import Aggregated from "./models/aggregated.model.js";
 import Market from "./models/market.model.js";
 import User from "./models/user/user.model.js";
 
+export let newExchange = null;  
+
 export async function getSocketData(exchange) {
+    newExchange = exchange
     const normalized = exchange.toLowerCase();
 
     let data;

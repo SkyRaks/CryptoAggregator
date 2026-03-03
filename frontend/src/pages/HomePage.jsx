@@ -79,12 +79,6 @@ const HomePage = () => {
 
 // ////////////////////////////////////////////////
 // table
-  // const { coins, fetchCoins } = useCryptoAggregator();
-
-  // useEffect(() => {
-  //   fetchCoins(exchangeOptions[selectedIndex].toLowerCase())
-  // }, [selectedIndex, fetchCoins])
-
   const { coins, setCoins } = useCryptoAggregator();
 
   useEffect(() => {
@@ -113,18 +107,18 @@ const HomePage = () => {
 
   useEffect(() => {
     // talk to server, ask for data
-    // console.log("selected index: ", selectedIndex)
-    if (socket.connected) {
+    const emitData = () => {
       socket.emit("home-event", 
         exchangeOptions[selectedIndex].toLowerCase()
       );
-    } else {
-      socket.once("connect", () => {
-        socket.emit("home-event", 
-          exchangeOptions[selectedIndex].toLowerCase()
-        );
-      })
     }
+    if (socket.connected) {
+      emitData();
+    } else {
+      socket.once("connect", 
+        emitData
+      );
+    };
   }, [selectedIndex]);
 
   const columns = useMemo(() => [
@@ -136,8 +130,6 @@ const HomePage = () => {
     { field: 'action', 
       headerName: "Favorite", 
       width: 100, 
-      // sortable: false, 
-      // filterable: false, 
       renderCell: (params) => {
         const exchange = exchangeOptions[selectedIndex].toLowerCase();
         const isFav = favoriteCoins.some(element => element.symbol === params.row.symbol && element.exchange === exchange);
@@ -158,14 +150,16 @@ const HomePage = () => {
     }
   ]);
 
-  const rows = Object.values(coins).map(coin => ({ 
-    id: coin._id,
-    symbol: coin.base_currency, 
-    price: coin.price, 
-    volume: coin.volume_24h, 
-    percent24h: coin.percent_change_24h,
-    percent1h: coin.percent_change_1h, 
-  }));
+  const rows = useMemo(() => {
+    console.log(Object.keys(coins).length);
+    return Object.values(coins).map(coin => ({ 
+      id: coin._id,
+      symbol: coin.base_currency, 
+      price: coin.price, 
+      volume: coin.volume_24h, 
+      percent24h: coin.percent_change_24h,
+      percent1h: coin.percent_change_1h, 
+  }))}, [coins, selectedIndex]);
 
   return (
     <Container>
@@ -234,16 +228,21 @@ const HomePage = () => {
 
     {/* table */}
 
-    <Paper sx={{ height: 400, width: '100%' }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[5, 10]}
-        disableRowSelectionOnClick
-        sx={{ border: 0 }}
-      />
-    </Paper>
+    <Box 
+      display="flex"
+      justifyContent="center"
+    >
+      <Paper sx={{ height: 400, width: '70%' }}>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          initialState={{ pagination: { paginationModel } }}
+          pageSizeOptions={[5, 10]}
+          disableRowSelectionOnClick
+          sx={{ border: 0 }}
+        />
+      </Paper>
+    </Box>
 
     </Fragment>
       ) : (
