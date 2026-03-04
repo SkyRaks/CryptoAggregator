@@ -94,7 +94,6 @@ const ProfilePage = () => {
             const normalized = Object.fromEntries(
                 data.map((coin) => [coin._id, coin])
             );
-            console.log(normalized);
             setFavoriteData(normalized);
         }
 
@@ -126,15 +125,17 @@ const ProfilePage = () => {
         { field: 'action', headerName: "action"} 
     ], []);
 
-    const rows = Object.values(favoriteData || {}).map(coin => ({ 
-        id: coin._id,
-        exchange: !coin.exchange ? "Aggregated" : coin.exchange,
-        symbol: coin.base_currency, 
-        price: coin.price, 
-        volume: coin.volume_24h, 
-        percent24h: coin.percent_change_24h,
-        percent1h: coin.percent_change_1h, 
-    }));
+
+    const rows = useMemo(() => {
+        return Object.values(favoriteData || {}).map(coin => ({ 
+            id: coin._id,
+            exchange: !coin.exchange ? "Aggregated" : coin.exchange,
+            symbol: coin.base_currency, 
+            price: coin.price, 
+            volume: coin.volume_24h, 
+            percent24h: coin.percent_change_24h,
+            percent1h: coin.percent_change_1h, 
+    }))}, [favoriteData]);
 
     const paginationModel = { page: 0, pageSize: 5 };
 
@@ -214,9 +215,9 @@ const ProfilePage = () => {
                     </span>
                 ) : null}
 
-                <Box sx={{display: "flex", gap: 2}}>
+                <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
 
-                    <Box sx={{width: !user.phoneNumber ? "100%" : "75%"}}>
+                    <Box sx={{width: !user.phoneNumber ? "100%" : "60%"}}>
                         <Paper sx={{ height: 400, width: '100%'}}>
                             <DataGrid
                                 rows={rows}

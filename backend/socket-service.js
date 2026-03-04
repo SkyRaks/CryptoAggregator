@@ -16,7 +16,7 @@ export async function getSocketData(exchange) {
     }
     
     return data;
-}
+}   
 
 export async function getFavoriteSocketData(userId) {
     try {
@@ -36,7 +36,7 @@ export async function getFavoriteSocketData(userId) {
             }
             if (item) favoriteData.push(item[0]);
         }
-        
+
         return favoriteData;
     } catch (error) {
         console.error(error.message)

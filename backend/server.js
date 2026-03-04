@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
 import coinRoutes from './routes/aggregated.route.js';
-import { cronAggregate, cronMarketAndHistory } from './scripts/main.script.js';
+import { cronAggregate, cronMarketAndHistory, cronProfile } from './scripts/main.script.js';
 import http from 'http';
 import { Server } from 'socket.io';
 import { getSocketData, getFavoriteSocketData } from "./socket-service.js";
@@ -34,6 +34,8 @@ export const io = new Server(server, { // instead of port is server
     }
 })
 
+export const profileSockets = new Map();
+
 io.on("connection", (socket) => {
     // authenticate token for socket
     try {
@@ -49,6 +51,12 @@ io.on("connection", (socket) => {
             process.env.ACCESS_TOKEN_SECRET
         );
         socket.user = user;
+
+        profileSockets.set(socket.user.id, socket);
+
+        socket.on("disconnect", () => {
+            profileSockets.delete(socket.user.id);
+        });
     } catch (error) {
         console.error(error.message);
         socket.disconnect();
@@ -75,16 +83,21 @@ io.on("connection", (socket) => {
 
             let data = await getFavoriteSocketData(userId);
 
-            socket.emit("profile-data", data);
+            const payload = data.map(coin => ({
+                ...coin.toObject(),
+                _id: coin._id.toString()
+            }));
+
+            socket.emit("profile-data", payload);
         } catch (error) {
             socket.emit("profile-data", error.message);
-            // console.log("profile event error");
         }
     })
 })
 
 cronAggregate.start();
 cronMarketAndHistory.start();
+cronProfile.start();
 
 cronAlert.start();
 

@@ -51,7 +51,6 @@ export async function aggregate() {
 }
 
 export async function patchAggregated() {
-    console.log("patchAggregated trigger")
     const exchangesData = await getData();
 
     const aggregatedData = {}
