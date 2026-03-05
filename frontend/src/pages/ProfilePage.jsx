@@ -1,4 +1,4 @@
-import { Box, Container, Grid, Link as MuiLink, TextField, Paper, Dialog, DialogTitle, DialogActions, DialogContent, Button, ButtonGroup, Menu, MenuItem } from '@mui/material';
+import { Box, Container, Grid, Link as MuiLink, TextField, Paper, Dialog, DialogTitle, DialogActions, DialogContent, Button, ButtonGroup, Menu, MenuItem, IconButton, Snackbar, Alert } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { Fragment, useEffect, useMemo, useState, useRef } from 'react';
 import { Link } from "react-router-dom";
@@ -7,11 +7,19 @@ import { userAuth } from '../actions/user.auth';
 import { io } from "socket.io-client";
 import parsePhoneNumber from 'libphonenumber-js'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { MdDelete } from "react-icons/md";
 
 // create socket connection
 let profileSocket = io("http://localhost:5000", {autoConnect: false})
 
 const ProfilePage = () => {
+
+    // snack bar pop ups
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: "",
+        severity: "success", // "success" | "error" | "warning" | "info"
+    });
 
     const accessToken = userAuth((state) => state.accessToken);
 
@@ -23,7 +31,7 @@ const ProfilePage = () => {
     // oliver123123@mail.com
     // idinahui123
 
-    const {addPhoneNumber} = userAuth();
+    const {addPhoneNumber, deletePhoneNumber} = userAuth();
     const {createAlert} = useCryptoAggregator();
 
     // for alert window
@@ -160,15 +168,54 @@ const ProfilePage = () => {
         setError(!isValid);
     };
 
-    const handleConfirm = () => {
+    const handleConfirm = async () => {
         if (error || !phone) return
         // let normalized = phone.startsWith("+") ? phone : "+" + phone;
-        addPhoneNumber(phone.toString());
+        const {success, message} = await addPhoneNumber(phone.toString());
+
+        if (success == true) user.phoneNumber = phone;
+        setSnackbar({ open:true, message:message, severity:success ? "success" : "error", });
         handleCloseWindow();
     };
 
+    // delete phone number stuff
+    const [openDeletePhone, setOpenDeletePhone] = useState(false);
+
+    const handleOpenDeletePhone = () => {
+        setOpenDeletePhone(true);
+    }
+    const handleCloseDeletePhone = () => {
+        setOpenDeletePhone(false);
+    }
+
+    const handleDeletePhone = async () => {
+        const {success, message} = await deletePhoneNumber();
+
+        if (success == true) user.phoneNumber = null
+        setSnackbar({ open:true, message:message, severity:success ? "success" : "error", });
+        handleCloseDeletePhone();
+    }
+
     return (
         <Fragment>
+            {/* delete phone number dialog */}
+            <Dialog
+                open={openDeletePhone}
+                onClose={handleCloseDeletePhone}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {"Delete phone Number?"}
+                </DialogTitle>
+
+                <DialogActions>
+                    <Button onClick={handleDeletePhone}>Yes</Button>
+                    <Button onClick={handleCloseDeletePhone}>No</Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* add phone number dialog */}
             <Dialog
                 open={openWindow}
                 onClose={handleCloseWindow}
@@ -204,6 +251,26 @@ const ProfilePage = () => {
             </Dialog>
 
             <Container sx={{mt: 3}}>
+                {/* user's info box */}
+                <Box sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    width: "100%",
+                }}>
+                    <Box>
+                        <h2 style={{marginLeft: "50px"}}>Welcome {user.name}</h2>
+                    </Box>
+
+                    {user.phoneNumber ? (
+                        <Box>
+                            Phone number is: {"+1"}{user.phoneNumber} 
+                            <IconButton style={{marginRight: "50px"}}>
+                                <MdDelete onClick={handleOpenDeletePhone}/>
+                            </IconButton>
+                        </Box>
+                    ): null}
+                </Box>
 
                 {!user.phoneNumber ? (
                     <span
@@ -215,8 +282,8 @@ const ProfilePage = () => {
                     </span>
                 ) : null}
 
+                {/* coin table and alert system box */}
                 <Box sx={{display: "flex", justifyContent: "center", gap: 2}}>
-
                     <Box sx={{width: !user.phoneNumber ? "100%" : "60%"}}>
                         <Paper sx={{ height: 400, width: '100%'}}>
                             <DataGrid
@@ -232,7 +299,7 @@ const ProfilePage = () => {
                     {user.phoneNumber ? (
                         <Box 
                             sx={{width: "25%",
-                                height: 350,
+                                height: 400,
                                 border: '1px solid',
                                 borderWidth: 2,
                                 borderRadius: 2,
@@ -328,6 +395,21 @@ const ProfilePage = () => {
                     ) : null}
 
                 </Box>
+
+                <Snackbar
+                open={snackbar.open}
+                autoHideDuration={5000}
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                >
+                <Alert
+                    onClose={() => setSnackbar({ ...snackbar, open: false })}
+                    severity={snackbar.severity}
+                    sx={{ width: "100%" }}
+                >
+                    {snackbar.message}
+                </Alert>
+                </Snackbar>
 
             </Container>
         </Fragment>

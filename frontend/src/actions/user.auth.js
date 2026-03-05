@@ -89,6 +89,29 @@ export const userAuth = create((set, get) => (
             } catch (error) {
                 console.error("add phone number failed", error.message);
             }
+        },
+
+        deletePhoneNumber: async () => {
+            const accessToken = get().accessToken;
+
+            try {
+                const res = await fetch("/user/delete-phone-number", {
+                    method: "POST",
+                    headers: {
+                        "Content-type":"application/json",
+                        "Authorization": `Bearer ${accessToken}`                        
+                    }
+                })
+
+                const data = await res.json()
+
+                if (!res.ok) {
+                    return {success: false, message: data.message};
+                }
+                return {success: true, message: data.message};
+            } catch (error) {
+                console.error("delete phone number failed", error.message);
+            }
         }
     }
 ))

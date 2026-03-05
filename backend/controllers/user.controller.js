@@ -119,6 +119,28 @@ export const addNumber = async(req, res) => {
     }
 }
 
+export const deleteNumber = async(req, res) => {
+    const userId = req.user.id
+
+    try {
+        const user = await User.findById(userId);
+
+        if (!user.phoneNumber) return res.status(409).json({success: false, message: "You don't have a phone number"});
+
+        try {
+            user.phoneNumber = null;
+
+            await user.save();
+            res.status(200).json({suceess: true, message: "Phone number deleted"})
+        } catch (error) {
+            console.error("failed to delete", error. message);
+        }
+        
+    } catch (error) {
+        res.status(500).json({success: false, message: error.message});
+    }
+}
+
 export const refresh = async (req, res) => {
     try {
         const token = req.cookies.refreshToken
@@ -144,29 +166,6 @@ export const refresh = async (req, res) => {
         const refreshUser = {id: user._id, name: user.name, email: user.email, phoneNumber: user.phoneNumber}
 
         res.status(201).json({success: true, accessToken: newAccessToken, user: refreshUser, favoriteCoins: favoriteCoins});
-
-        //     const authUser = { id: user._id, name: user.name, email: user.email, phoneNumber: user.phoneNumber}
-
-        // const accessToken = generateAccessToken(authUser);
-
-        // const refreshToken = generateRefreshToken(authUser);
-        // user.refreshTokens.push(refreshToken);
-        // await user.save(); // save refresh token to DB
-
-        // res.cookie("refreshToken", refreshToken, {
-        //     httpOnly: true, 
-        //     secure: false,
-        //     sameSite: "strict",
-        //     path: "/user",
-        // });
-
-        // // const favoriteCoins = user.favorites;
-
-        // res.status(200).json({success: true, accessToken: accessToken, 
-        //     user: authUser,
-        //     favoriteCoins: user.favorites,
-        // });
-
     } catch (error) {
         res.status(403).json({success: false, message: "invalid refresh token"});
     }

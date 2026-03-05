@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
 import coinRoutes from './routes/aggregated.route.js';
-import { cronAggregate, cronMarketAndHistory, cronProfile } from './scripts/main.script.js';
+// import { cronAggregate, cronMarketAndHistory, cronProfile } from './scripts/main.script.js';
 import http from 'http';
 import { Server } from 'socket.io';
 import { getSocketData, getFavoriteSocketData } from "./socket-service.js";
@@ -95,9 +95,9 @@ io.on("connection", (socket) => {
     })
 })
 
-cronAggregate.start();
-cronMarketAndHistory.start();
-cronProfile.start();
+// cronAggregate.start();
+// cronMarketAndHistory.start();
+// cronProfile.start();
 
 cronAlert.start();
 

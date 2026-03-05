@@ -13,6 +13,5 @@ router.delete("/remove-favorite", authenticateToken, removeFavorite);
 router.get("/get-favorite", authenticateToken, getFavoriteData);
 
 router.post("/create-alert", authenticateToken, createAlert)
-// /crypto-aggregator/create-alert
 
 export default router;
