@@ -18,7 +18,7 @@ const ProfilePage = () => {
     const [snackbar, setSnackbar] = useState({
         open: false,
         message: "",
-        severity: "success", // "success" | "error" | "warning" | "info"
+        severity: "success",
     });
 
     const accessToken = userAuth((state) => state.accessToken);

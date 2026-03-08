@@ -64,6 +64,18 @@ export const userAuth = create((set, get) => (
             return {success: true, message: "you've been logged in"};
         },
 
+        addFavoriteLocal: (symbol, exchange) => 
+            set((state) => ({
+                favoriteCoins: [...state.favoriteCoins, {symbol, exchange}],
+            })),
+
+        removeFavoriteLocal: (symbol, exchange) => 
+            set((state) => ({
+                favoriteCoins: state.favoriteCoins.filter(
+                    (item) => !(item.symbol === symbol && item.exchange === exchange)
+                ),
+            })),
+
         addPhoneNumber: async (phone) => {
             const accessToken = get().accessToken;
             if (!phone) {

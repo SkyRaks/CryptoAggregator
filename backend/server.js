@@ -2,15 +2,16 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
 import coinRoutes from './routes/aggregated.route.js';
-import { cronAggregate, cronMarketAndHistory, cronProfile } from './scripts/main.script.js';
+// import {cronAggregate, cronMarketAndHistory, cronProfile } from './scripts/main.script.js';
 import http from 'http';
 import { Server } from 'socket.io';
 import { getSocketData, getFavoriteSocketData } from "./socket-service.js";
 import userRoutes from './routes/auth.route.js';
 import cookieParser from 'cookie-parser';
 import jwt from "jsonwebtoken";
-import { cronAlert } from './queues/alert.queue.js';
+// import { cronAlert } from './queues/alert.queue.js';
 import {worker} from "./workers/alert.worker.js";
+console.log("SERVER PID:", process.pid);
 
 dotenv.config({ path: "../../CryptoAggregator/.env" });
 
@@ -95,11 +96,11 @@ io.on("connection", (socket) => {
     })
 })
 
-cronAggregate.start();
-cronMarketAndHistory.start();
-cronProfile.start();
+// cronAggregate.start();
+// cronMarketAndHistory.start();
+// cronProfile.start();
 
-cronAlert.start();
+// cronAlert.start();
 
 server.listen(PORT, "0.0.0.0", () => {
     console.log("server started at: http://localhost:" + PORT);

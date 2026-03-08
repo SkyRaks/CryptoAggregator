@@ -33,8 +33,10 @@ const HomePage = () => {
   const accessToken = userAuth((state) => state.accessToken); 
 
   const favoriteCoins = userAuth((state) => state.favoriteCoins);
-
   const setFavoriteCoins = userAuth((state) => state.setFavoriteCoins);
+
+  const addFavoriteLocal = userAuth((state) => state.addFavoriteLocal);
+  const removeFavoriteLocal = userAuth((state) => state.removeFavoriteLocal);
 
   const { addFavorite, removeFavorite } = useCryptoAggregator();
 
@@ -42,23 +44,29 @@ const HomePage = () => {
     const exchange = exchangeOptions[selectedIndex].toLowerCase();
 
     if (!symbol || !exchange) console.log("empty fields");
-
     addFavorite(symbol, exchange);
-
-    const updated = favoriteCoins.filter(
-      (item) => !(item.symbol === symbol && item.exchange === exchange)
-    )
-    setFavoriteCoins(updated);
-    console.log(favoriteCoins);
   }
 
   const handleRemoveFavorite = (symbol) => {
     const exchange = exchangeOptions[selectedIndex].toLowerCase();
 
-    if (!symbol || !exchange) {
-      console.log("empty fields");
+    if (!symbol || !exchange) console.log("empty fields");
+    removeFavorite(symbol, exchange);
+  }
+
+  // realtime update buttons
+  const handleToggleFavorite = (symbol) => {
+    const exchange = exchangeOptions[selectedIndex].toLowerCase();
+    const isFav = favoriteCoins.some(
+      (item) => item.symbol === symbol && item.exchange === exchange
+    );
+
+    if (isFav) {
+      removeFavoriteLocal(symbol, exchange);
+      handleRemoveFavorite(symbol);
     } else {
-      removeFavorite(symbol, exchange);
+      addFavoriteLocal(symbol, exchange);
+      handleAddFavorite(symbol);
     }
   }
 
@@ -129,32 +137,31 @@ const HomePage = () => {
   }, [selectedIndex]);
 
   const columns = useMemo(() => [
-    { field: 'symbol', headerName: 'Symbol', width: 10 },
-    { field: 'price', headerName: 'Price', type: 'number', width: 90, },
-    { field: 'volume', headerName: 'Volume', type: 'number', width: 90, },
-    { field: 'percent24h', headerName: '%24h', type: 'number', width: 90, },
-    { field: 'percent1h', headerName: '%1h', type: 'number', width: 90, },
+    { field: 'symbol', headerName: 'Symbol', width: 90, },
+    { field: 'price', headerName: 'Price', type: 'number', flex: 1, },
+    { field: 'volume', headerName: 'Volume', type: 'number', flex: 1, },
+    { field: 'percent24h', headerName: '%24h', type: 'number', flex: 1, },
+    { field: 'percent1h', headerName: '%1h', type: 'number', flex: 1, },
     { field: 'action', 
       headerName: "Favorite", 
-      width: 100, 
+      flex: 1, 
+
       renderCell: (params) => {
         const exchange = exchangeOptions[selectedIndex].toLowerCase();
-        const isFav = favoriteCoins.some(element => element.symbol === params.row.symbol && element.exchange === exchange);
+        const isFav = favoriteCoins.some(
+          element => element.symbol === params.row.symbol && element.exchange === exchange
+        );
 
         return (
         <IconButton
-        sx={{color: isFav ? "#ff1744" : "#ffee33"}}
-        onClick={() => { 
-          isFav ? 
-          handleRemoveFavorite(params.row.symbol)
-          :
-          handleAddFavorite(params.row.symbol)
-          }}
-          >
+          sx={{color: isFav ? "#ff1744" : "#ffee33"}}
+          onClick={() => handleToggleFavorite(params.row.symbol)}
+        >
           { isFav ? <IoIosRemoveCircle /> : <IoIosAddCircle />}
         </IconButton>
         )
       }
+
     }
   ]);
 

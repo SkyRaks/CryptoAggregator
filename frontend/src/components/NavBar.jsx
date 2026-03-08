@@ -73,14 +73,12 @@ export default function ButtonAppBar({ toggleTheme, mode }) {
                         to="/"
                         >
                             <img src={CryptoAggregatorIcon} alt='My Logo' style={{width: 40, height: 30}}/>
-                        {/* <FaHome size="30px"/> */}
                     </IconButton>
                 </Typography>
 
                 {accessToken !== null ? (
                     <Fragment>
                         <IconButton 
-                        // change it to link to profile page later
                             color='inherit'
                             component={Link}
                             to="/profile"

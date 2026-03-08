@@ -21,11 +21,23 @@ export async function addJobs() {
 const cronExpressionEveryMinute = "*/1 * * * *"; // every minute
 
 let alertAddJobsCount = 1;
+let alertRunning = false;
 
 export const cronAlert = cron.schedule(cronExpressionEveryMinute,
     async () => {
-        await addJobs();
-        alertAddJobsCount += 1
-        console.log("cronAlertTriggered count: ", alertAddJobsCount);
-    }, { scheduled: false }
+        // if (alertRunning) return;
+
+        // alertRunning = true;
+
+        // try {
+        //     await addJobs();
+        //     alertAddJobsCount += 1
+        //     console.log("cronAlertTriggered count: ", alertAddJobsCount);   
+        // } catch (error) {
+        //     console.error(error);
+        // } finally {
+        //     alertRunning = false;
+        // }
+        console.log("cronAlert trigger");
+    }, { scheduled: false, recoverMissedExecutions: false }
 )

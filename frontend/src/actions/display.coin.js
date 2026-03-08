@@ -9,7 +9,6 @@ export const useCryptoAggregator = create((set) => (
 
         fetchCoins: async(exchange) => {
             // http fetch
-
             try {
                 const res = await fetch("/crypto-aggregator", {
                     method: "POST",
