@@ -290,7 +290,7 @@ const ProfilePage = () => {
                                 rows={rows}
                                 columns={columns}
                                 initialState={{ pagination: { paginationModel } }}
-                                checkboxSelection
+                                disableRowSelectionOnClick
                             />
                         </Paper>
                     </Box>

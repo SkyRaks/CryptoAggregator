@@ -9,10 +9,11 @@ import LoginPage from "./pages/auth/LoginPage";
 import ProfilePage from "./pages/ProfilePage";
 
 import { userAuth } from "./actions/user.auth";
+// import CryptoAggregatorIcon from '../src/assets/CryptoAggregatorIcon.png';
 
 function App() {
 
-  const [mode, setMode] = useState("light");
+  const [mode, setMode] = useState("dark");
 
   const setAccessToken = userAuth((state) => (state.setAccessToken));
 
@@ -53,7 +54,7 @@ function App() {
           favorite: {
             main: "#ffee33",
             contrastText: "#000",
-          }
+          },
         },
       }),
     [mode]
@@ -68,7 +69,7 @@ function App() {
       <CssBaseline />
       <Box sx={{height: '100vh'}}>
 
-        <NavBar toggleTheme={toggleTheme} mode={mode}/> 
+        <NavBar toggleTheme={toggleTheme} mode={mode}/>
 
         <Routes>
           <Route path="/" element={<HomePage />}></Route>

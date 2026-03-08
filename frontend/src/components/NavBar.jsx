@@ -1,13 +1,12 @@
 import { AppBar, Box, Toolbar, Container, Typography, Button, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
 import { MdOutlineLightMode, MdDarkMode } from "react-icons/md";
-import { FaHome } from "react-icons/fa";
 import { IoPersonCircle } from "react-icons/io5";
 import { Link } from 'react-router-dom';
 import { userAuth } from '../actions/user.auth';
 import { MdLogout } from "react-icons/md";
 import { useState } from 'react';
 import { Fragment } from 'react';
+import CryptoAggregatorIcon from '../../public/CryptoAggregatorIcon.png'
 
 export default function ButtonAppBar({ toggleTheme, mode }) {
     const accessToken = userAuth((state) => state.accessToken);
@@ -73,7 +72,8 @@ export default function ButtonAppBar({ toggleTheme, mode }) {
                         component={Link}
                         to="/"
                         >
-                        <FaHome size="30px"/>
+                            <img src={CryptoAggregatorIcon} alt='My Logo' style={{width: 40, height: 30}}/>
+                        {/* <FaHome size="30px"/> */}
                     </IconButton>
                 </Typography>
 

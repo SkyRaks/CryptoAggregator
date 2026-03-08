@@ -29,20 +29,27 @@ const paginationModel = { page: 0, pageSize: 5 };
 const exchangeOptions = ['CoinMarketCap', 'Aggregated', 'Kraken'];  
 
 const HomePage = () => {
+
   const accessToken = userAuth((state) => state.accessToken); 
 
   const favoriteCoins = userAuth((state) => state.favoriteCoins);
+
+  const setFavoriteCoins = userAuth((state) => state.setFavoriteCoins);
 
   const { addFavorite, removeFavorite } = useCryptoAggregator();
 
   const handleAddFavorite = (symbol) => {
     const exchange = exchangeOptions[selectedIndex].toLowerCase();
 
-    if (!symbol || !exchange) {
-      console.log("empty fields")
-    } else {
-      addFavorite(symbol, exchange);
-    }
+    if (!symbol || !exchange) console.log("empty fields");
+
+    addFavorite(symbol, exchange);
+
+    const updated = favoriteCoins.filter(
+      (item) => !(item.symbol === symbol && item.exchange === exchange)
+    )
+    setFavoriteCoins(updated);
+    console.log(favoriteCoins);
   }
 
   const handleRemoveFavorite = (symbol) => {
@@ -142,7 +149,8 @@ const HomePage = () => {
           handleRemoveFavorite(params.row.symbol)
           :
           handleAddFavorite(params.row.symbol)
-          }}>
+          }}
+          >
           { isFav ? <IoIosRemoveCircle /> : <IoIosAddCircle />}
         </IconButton>
         )
@@ -151,7 +159,6 @@ const HomePage = () => {
   ]);
 
   const rows = useMemo(() => {
-    console.log(Object.keys(coins).length);
     return Object.values(coins).map(coin => ({ 
       id: coin._id,
       symbol: coin.base_currency, 
