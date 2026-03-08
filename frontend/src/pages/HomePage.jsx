@@ -139,7 +139,7 @@ const HomePage = () => {
   const columns = useMemo(() => [
     { field: 'symbol', headerName: 'Symbol', width: 90, },
     { field: 'price', headerName: 'Price', type: 'number', flex: 1, },
-    { field: 'volume', headerName: 'Volume', type: 'number', flex: 1, },
+    { field: 'volume', headerName: 'Volume', type: 'number', width: 150, },
     { field: 'percent24h', headerName: '%24h', type: 'number', flex: 1, },
     { field: 'percent1h', headerName: '%1h', type: 'number', flex: 1, },
     { field: 'action', 

@@ -94,12 +94,18 @@ export const removeFavorite = async (req, res) => {
 
         for (let i = 0; i < user.favorites.length; i++) {
             if (user.favorites[i].symbol === symbol && user.favorites[i].exchange === exchange) {
-                coinToRemove = user.favorites[i]._id;
+                coinToRemove = {
+                    symbol: user.favorites[i].symbol, 
+                    exchange: user.favorites[i].exchange
+                }
                 break;
             }
         }
-
-        user.favorites.remove(coinToRemove);
+        
+        user.favorites.pull({
+            symbol: coinToRemove.symbol,
+            exchange: coinToRemove.exchange
+        });
         await user.save();
         
         res.status(200).json({success: true, message: "coin removed"});

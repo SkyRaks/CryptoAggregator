@@ -7,6 +7,7 @@ import { userAuth } from '../actions/user.auth';
 import { io } from "socket.io-client";
 import parsePhoneNumber from 'libphonenumber-js'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { IoIosRemoveCircle } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 
 // create socket connection
@@ -28,11 +29,12 @@ const ProfilePage = () => {
     const user = userAuth((state) => state.user);
     const favoriteData = userAuth((state) => state.favoriteData);
     const setFavoriteData = userAuth((state) => state.setFavoriteData);
+    const removeFavoriteLocal = userAuth((state) => state.removeFavoriteLocal);
     // oliver123123@mail.com
     // idinahui123
 
     const {addPhoneNumber, deletePhoneNumber} = userAuth();
-    const {createAlert} = useCryptoAggregator();
+    const {createAlert, removeFavorite} = useCryptoAggregator();
 
     // for alert window
     const coinOptions = useMemo(() => {
@@ -100,9 +102,11 @@ const ProfilePage = () => {
 
         const handleProfileData = (data) => {
             const normalized = Object.fromEntries(
-                data.map((coin) => [coin._id, coin])
+                // data.map((coin) => [coin._id, coin])
+                data.map((coin) => [`${coin.base_currency}_${!coin.exchange ? "aggregated" : coin.exchange }`, coin]),
             );
             setFavoriteData(normalized);
+            console.log("normalized: ", normalized)
         }
 
         profileSocket.on("profile-data", handleProfileData);
@@ -123,20 +127,43 @@ const ProfilePage = () => {
 // //                                    ▼
 // //   CLIENT ◀──────── emit("profile-data")
 
+    const handleRemoveFavorite = (symbol, exchange) => {
+        if (!symbol || !exchange) return
+        const normalized = exchange.toLowerCase();
+
+        removeFavorite(symbol, normalized);
+        removeFavoriteLocal(symbol, normalized);
+        // removeFavoriteData
+    }
+
     const columns = useMemo(() => [
-        { field: 'exchange', headerName: 'Exchange', width: 10 },
-        { field: 'symbol', headerName: 'Symbol', width: 10 },
-        { field: 'price', headerName: 'Price', type: 'number', width: 90, },
-        { field: 'volume', headerName: 'Volume', type: 'number', width: 90, },
-        { field: 'percent24h', headerName: '%24h', type: 'number', width: 90, },
-        { field: 'percent1h', headerName: '%1h', type: 'number', width: 90, },
-        { field: 'action', headerName: "action"} 
+        { field: 'exchange', headerName: 'Exchange', width: 120 },
+        { field: 'symbol', headerName: 'Symbol', width: 90 },
+        { field: 'price', headerName: 'Price', type: 'number', flex: 1, },
+        { field: 'volume', headerName: 'Volume', type: 'number', flex: 1, },
+        { field: 'percent24h', headerName: '%24h', type: 'number', flex: 1, },
+        { field: 'percent1h', headerName: '%1h', type: 'number', flex: 1, },
+        { field: 'action', 
+            headerName: "action",
+            flex: 1,
+
+            renderCell: (params) => {
+            return (
+                <IconButton
+                    sx={{color: "#ff1744"}}
+                    onClick={() => handleRemoveFavorite(params.row.symbol, params.row.exchange)}
+                >
+                    <IoIosRemoveCircle />
+                </IconButton>
+            )
+            }
+        } 
     ], []);
 
 
     const rows = useMemo(() => {
         return Object.values(favoriteData || {}).map(coin => ({ 
-            id: coin._id,
+            id: `${coin.base_currency}_${coin.exchange}`,
             exchange: !coin.exchange ? "Aggregated" : coin.exchange,
             symbol: coin.base_currency, 
             price: coin.price, 

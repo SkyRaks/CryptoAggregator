@@ -9,10 +9,6 @@ export async function createMarketData() { // "USD"
 
     const marketData = {};
 
-    if (mongoose.connection.readyState !== 1) { // check if mongoDB idling
-        await mongoose.connect(process.env.MONGO_URI)
-    }
-
     for (let count = 0; count <= Object.keys(exchangesData).length - 1; count++) {
         for (const [symbol, data] of Object.entries(exchangesData[count])) {
 
@@ -37,7 +33,6 @@ export async function createMarketData() { // "USD"
         const docs = Object.values(marketData).flat();
 
         const ops = docs.map(doc => ({
-            // i didn't know there is a thing like bulkWrite
             updateOne: {
                 filter: {
                     exchange: doc.exchange,

@@ -25,6 +25,7 @@ let alertRunning = false;
 
 export const cronAlert = cron.schedule(cronExpressionEveryMinute,
     async () => {
+        console.log("cronAlert pid: ", process.pid)
         // if (alertRunning) return;
 
         // alertRunning = true;

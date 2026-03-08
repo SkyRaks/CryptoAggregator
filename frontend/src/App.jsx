@@ -13,7 +13,7 @@ import { userAuth } from "./actions/user.auth";
 
 function App() {
 
-  const [mode, setMode] = useState("dark");
+  const [mode, setMode] = useState("light");
 
   const setAccessToken = userAuth((state) => (state.setAccessToken));
 

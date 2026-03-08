@@ -32,7 +32,7 @@ export async function getFavoriteSocketData(userId) {
             if (favoriteList[i].exchange === "aggregated") {
                 item = await Aggregated.find({base_currency: favoriteList[i].symbol});                
             } else {
-                item = await Market.find({base_currency: favoriteList[i].symbol});
+                item = await Market.find({base_currency: favoriteList[i].symbol, exchange: favoriteList[i].exchange});
             }
             if (item) favoriteData.push(item[0]);
         }
