@@ -5,6 +5,11 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({ // will need to manage this stuff later
   plugins: [react()],
 
+  preview: {
+    host: "0.0.0.0",
+    port: "4173",
+  },
+
   server: {
     proxy: {
       "/crypto-aggregator": {
