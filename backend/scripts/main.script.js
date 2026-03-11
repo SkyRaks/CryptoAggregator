@@ -22,12 +22,12 @@ export async function getData() {
     return result;
 }
 
-const cronExpressionEvery10Minutes = "*/10 * * * *";
+// const cronExpressionEvery10Minutes = "*/10 * * * *";
 const cronExpressionEvery15Minutes = "*/15 * * * *";
 const cronExpressionEveryHour = "0 * * * *";
 
 const cronExpressionEveryMinute = "*/1 * * * *"; // every minute
-const cronExpressionEvery5Minutes = "*/5 * * * *"; // every 5 minutes
+// const cronExpressionEvery5Minutes = "*/5 * * * *"; // every 5 minutes
 
 let aggregateCounter = 1;
 let marketCounter = 1;
@@ -37,16 +37,12 @@ let aggregateRunning = false;
 
 export const cronAggregate = cron.schedule(cronExpressionEveryMinute, 
     async () => {
-        console.log("cronAggregate pid: ", process.pid)
         if (aggregateRunning) return;
 
         aggregateRunning = true;
 
         try {
-
-            console.time("patchAggregated");
             await patchAggregated();
-            console.timeEnd("patchAggregated");
 
             // get new data
             if (newExchange === "aggregated") {
@@ -75,7 +71,6 @@ let marketRunning = false;
 
 export const cronMarket = cron.schedule(cronExpressionEvery15Minutes,
     async () => {
-        console.log("cronMarket pid: ", process.pid)
         if (marketRunning) return
 
         marketRunning = true;
@@ -84,9 +79,6 @@ export const cronMarket = cron.schedule(cronExpressionEvery15Minutes,
             console.time("createMarketData")
             await createMarketData();
             console.timeEnd("createMarketData")
-            // console.time("createHistoryData")
-            // await createHistoryData();
-            // console.timeEnd("createHistoryData")
 
             // get new data
             const marketData = await getSocketData(newExchange);
@@ -113,6 +105,7 @@ export const cronMarket = cron.schedule(cronExpressionEvery15Minutes,
 let historyRunning = false;
 
 export const cronHistory = cron.schedule(cronExpressionEveryHour,
+    // NOT USED FOR NOW
     async () => {
         if (historyRunning) return
 
@@ -138,7 +131,6 @@ let profileRunning = false;
 
 export const cronProfile = cron.schedule(cronExpressionEveryMinute,
     async () => {
-        console.log("cronProfile pid: ", process.pid)
         if (profileRunning) return;
 
         profileRunning = true;

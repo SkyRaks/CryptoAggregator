@@ -18,27 +18,25 @@ export async function addJobs() {
     }  
 }
 
-const cronExpressionEveryMinute = "*/1 * * * *"; // every minute
+const cronExpressionEveryMinute = "*/1 * * * *";
 
-let alertAddJobsCount = 1;
+let alertAddJobsCount = 0;
 let alertRunning = false;
 
 export const cronAlert = cron.schedule(cronExpressionEveryMinute,
     async () => {
-        console.log("cronAlert pid: ", process.pid)
-        // if (alertRunning) return;
+        if (alertRunning) return;
 
-        // alertRunning = true;
+        alertRunning = true;
 
-        // try {
-        //     await addJobs();
-        //     alertAddJobsCount += 1
-        //     console.log("cronAlertTriggered count: ", alertAddJobsCount);   
-        // } catch (error) {
-        //     console.error(error);
-        // } finally {
-        //     alertRunning = false;
-        // }
-        console.log("cronAlert trigger");
+        try {
+            await addJobs();
+            alertAddJobsCount += 1
+            console.log("cronAlertTriggered count: ", alertAddJobsCount);   
+        } catch (error) {
+            console.error(error);
+        } finally {
+            alertRunning = false;
+        }
     }, { scheduled: false, recoverMissedExecutions: false }
 )

@@ -22,7 +22,6 @@ export const worker = new Worker("alerts",
         const coin = userAlert.coin;
         const targetPrice = userAlert.targetPrice;
         
-        console.log("before data");
         // find user's stuff
         let data = null;
 
@@ -31,7 +30,6 @@ export const worker = new Worker("alerts",
         } else {
             data = await Market.findOne({exchange: exchange, base_currency: coin});
         }
-        console.log("after");
 
         let comparison = false;
         let sign = null;
@@ -55,26 +53,28 @@ export const worker = new Worker("alerts",
                 sign = "smaller or equal"
                 break
         }
-        
+
         if (comparison) {
+            userAlert.status = "triggered";
+            await userAlert.save();
+            
             const user = await User.findById(userAlert.userId);
             const phoneNumber = user.phoneNumber;
 
             // twilio stuff
             const client = Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
-            const message = await client.messages.create({
-                body: `${data.base_currency} is ${sign} than target value. Check it out!`,
-                from: "+14179240379",
-                // later maybe will change to custom country code even though it probablly will always be +1
-                to: `+1${phoneNumber}`,
-            })
-            //
-            
-            // update alert record
-            userAlert.status = "triggered";
-            await userAlert.save();
-            console.log(message.body);
+            try {
+                const message = await client.messages.create({
+                    body: `${data.base_currency} is ${sign} than target price of ${targetPrice}. Check it out!`,
+                    from: "+14179240379",
+                    // later maybe will change to custom country code even though it probablly will always be +1
+                    to: `+1${phoneNumber}`,
+                })   
+                console.log("message sent: ", message.sid);   
+            } catch (error) {
+                console.error("twilio pidor: ", error);
+            }
         } else {
             return
         }

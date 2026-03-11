@@ -13,10 +13,10 @@ export default defineConfig({ // will need to manage this stuff later
   server: {
     proxy: {
       "/crypto-aggregator": {
-        target: "http://localhost:5000",
+        target: "http://backend:5000",
       },
       "/user": {
-        target: "http://localhost:5000",
+        target: "http://backend:5000",
         changeOrigin: true,
       }
     }

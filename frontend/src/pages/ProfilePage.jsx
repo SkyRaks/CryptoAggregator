@@ -75,8 +75,6 @@ const ProfilePage = () => {
     };
 
     const handleAlert = async () => {
-        // make a lot of checks if no fields
-        // const favoriteCoinId = coinOptions[selectedCoin].coinId;
         const favCoinSymbol = coinOptions[selectedCoin].symbol;
         const favCoinExchange = coinOptions[selectedCoin].exchange;
 
@@ -85,11 +83,10 @@ const ProfilePage = () => {
         const {success} = await createAlert({favCoinSymbol, favCoinExchange, amount, sign});
 
         if (success == true) {
-            console.log("it worked");
+            setSnackbar({open: true, message: "Alert created!", severity: "success"});
         } else {
-            console.log("bruh");
+            setSnackbar({open: true, message: "Something went wrong!", severity: "error"});
         }
-        // next pop snackbar that all's good or not
     }
 
     useEffect(() => {

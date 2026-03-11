@@ -144,7 +144,6 @@ export const createAlert = async (req, res) => {
     if (!favoriteData) {
         return res.status(404).json({success: false, message: "coin not found"});
     }
-    // 69701b07f8748a9afc3135f4
 
     const newAlert = new Alert({
         userId: userId,
