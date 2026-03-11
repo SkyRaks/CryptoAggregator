@@ -53,11 +53,9 @@ export const worker = new Worker("alerts",
                 sign = "smaller or equal"
                 break
         }
+        console.log("comparison: ", comparison);
 
         if (comparison) {
-            userAlert.status = "triggered";
-            await userAlert.save();
-            
             const user = await User.findById(userAlert.userId);
             const phoneNumber = user.phoneNumber;
 
@@ -68,14 +66,17 @@ export const worker = new Worker("alerts",
                 const message = await client.messages.create({
                     body: `${data.base_currency} is ${sign} than target price of ${targetPrice}. Check it out!`,
                     from: "+14179240379",
-                    // later maybe will change to custom country code even though it probablly will always be +1
                     to: `+1${phoneNumber}`,
                 })   
                 console.log("message sent: ", message.sid);   
+
+                userAlert.status = "triggered";
+                await userAlert.save();
             } catch (error) {
-                console.error("twilio pidor: ", error);
+                console.error("twilio error: ", error);
             }
         } else {
+            console.log("do nothing")
             return
         }
     },
