@@ -5,8 +5,10 @@ const redisConnection = new IORedis(
     process.env.REDIS_URL || {
         host: "redis",
         port: 6379,
-        maxRetriesPerRequest: null,
     },
+    {
+        maxRetriesPerRequest: null,
+    }
 );
 
 export default redisConnection;
