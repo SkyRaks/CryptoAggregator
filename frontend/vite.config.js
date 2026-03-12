@@ -18,6 +18,10 @@ export default defineConfig({ // will need to manage this stuff later
       "/user": {
         target: "http://backend:5000",
         changeOrigin: true,
+      },
+      "feisty-inspiration-production-c46b.up.railway.app": {
+        target: "http://frontend:4173",
+        changeOrigin: true,
       }
     }
   }
