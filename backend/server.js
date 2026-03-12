@@ -16,12 +16,17 @@ dotenv.config({ path: "../../CryptoAggregator/.env" });
 
 await connectDB();
 
+// feisty-inspiration-production-c46b.up.railway.app
 const app = express();
 const PORT = process.env.PORT || 5000
 
 app.use(express.json());
-
 app.use(cookieParser());
+
+app.use(cors({
+    origin: process.env.FRONTEND_API_URL,
+    credentials: true,
+}))
 
 app.use("/crypto-aggregator", coinRoutes)
 app.use("/user", userRoutes);

@@ -9,6 +9,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import ProfilePage from "./pages/ProfilePage";
 
 import { userAuth } from "./actions/user.auth";
+import { API_URL } from "./api";
 // import CryptoAggregatorIcon from '../src/assets/CryptoAggregatorIcon.png';
 
 function App() {
@@ -25,7 +26,7 @@ function App() {
     const refreshAccessToken = async () => {
 
       try {
-        const res = await fetch("/user/refresh", {
+        const res = await fetch(`${API_URL}/user/refresh`, {
           method: "POST",
           credentials: "include",
         })
