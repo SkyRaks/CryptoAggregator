@@ -31,14 +31,12 @@ fully containerized using **Docker Compose**.\
 ## Requirements
 
 You need:
-*Docker
-*Docker Compose
-*MongoDB dababase
-*CoinMaketCap account
-*Kraken account
-*Twilio account
-https://id.kraken.com/sign-in
-https://pro.coinmarketcap.com/account
+* Docker
+* Docker Compose
+* MongoDB dababase
+* CoinMaketCap account https://pro.coinmarketcap.com/account
+* Kraken account https://id.kraken.com/sign-in
+* Twilio account
 
 ---
 
