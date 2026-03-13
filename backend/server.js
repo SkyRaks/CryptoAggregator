@@ -11,12 +11,12 @@ import cookieParser from 'cookie-parser';
 import jwt from "jsonwebtoken";
 import { cronAlert } from './queues/alert.queue.js';
 import {worker} from "./workers/alert.worker.js";
+import cors from "cors";
 
 dotenv.config({ path: "../../CryptoAggregator/.env" });
 
 await connectDB();
 
-// feisty-inspiration-production-c46b.up.railway.app
 const app = express();
 const PORT = process.env.PORT || 5000
 
