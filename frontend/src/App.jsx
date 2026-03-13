@@ -22,7 +22,7 @@ function App() {
   const setUser = userAuth((state) => (state.setUser));
 
   useEffect(() => { // when page renders (or refresh) it gets access token
-    console.log("meta variables", import.meta.env);
+    // console.log("meta variables", import.meta.env);
     console.log("api url", API_URL);
     const refreshAccessToken = async () => {
 
