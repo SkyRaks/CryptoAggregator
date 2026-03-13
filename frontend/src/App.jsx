@@ -9,7 +9,8 @@ import LoginPage from "./pages/auth/LoginPage";
 import ProfilePage from "./pages/ProfilePage";
 
 import { userAuth } from "./actions/user.auth";
-import { API_URL } from "./api";
+// import { API_URL } from "./api";
+const API_URL = process.env.VITE_BACKEND_API_URL;
 
 function App() {
 
