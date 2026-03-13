@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { API_URL } from "./api";
+import { API_URL } from "./api.js";
 
 export const userAuth = create((set, get) => (
     {

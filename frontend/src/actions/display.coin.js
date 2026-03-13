@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { userAuth } from "./user.auth";
-import { API_URL } from "./api";
+import { API_URL } from "./api.js";
 
 export const useCryptoAggregator = create((set) => (
     {
