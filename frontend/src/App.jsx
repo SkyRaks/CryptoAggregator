@@ -9,7 +9,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import ProfilePage from "./pages/ProfilePage";
 
 import { userAuth } from "./actions/user.auth";
-import { API_URL } from ".api.js";
+import { API_URL } from ".api";
 
 function App() {
 
