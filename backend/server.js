@@ -37,7 +37,8 @@ export const server = http.createServer(app); // socket will attach to this serv
 
 export const io = new Server(server, { // instead of port is server
     cors: {
-        origin: "*",
+        origin: process.env.FRONTEND_API_URL,
+        credentials: true,
     }
 })
 
