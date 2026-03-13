@@ -19,6 +19,7 @@ await connectDB();
 
 const app = express();
 const PORT = process.env.PORT || 5000
+const FRONTEND_API_URL = process.env.FRONTEND_API_URL
 
 app.use(express.json());
 app.use(cookieParser());
