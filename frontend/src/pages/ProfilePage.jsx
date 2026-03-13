@@ -11,7 +11,7 @@ import { MdDelete } from "react-icons/md";
 import { API_URL } from '../api';
 
 // create socket connection
-let profileSocket = io(`${API_URL}/profile` || "http://localhost:5000", {autoConnect: false})
+let profileSocket = io(API_URL || "http://localhost:5000", {autoConnect: false})
 
 const ProfilePage = () => {
 

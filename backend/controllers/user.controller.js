@@ -53,7 +53,7 @@ export const login = async(req, res) => {
             httpOnly: true, 
             secure: false,
             sameSite: "strict",
-            path: "/user",
+            // path: "/user",
         });
 
         // const favoriteCoins = user.favorites;
@@ -84,8 +84,8 @@ export const logout = async(req, res) => {
 
         res.cookie("refreshToken", "", {
             httpOnly: true, 
-            secure: false,
-            sameSite: "strict",
+            secure: true,
+            sameSite: "none",
             path: "/user",
             expires: new Date(0),
         })
