@@ -78,7 +78,7 @@ export const useCryptoAggregator = create((set) => (
                 });
                 const data = await res.json();
 
-                console.log("res success: ", res.success);
+                // console.log("res success: ", res.success);
 
                 if (!res.ok) return {success: false, message: data.message};
 

@@ -103,7 +103,7 @@ const ProfilePage = () => {
                 data.map((coin) => [`${coin.base_currency}_${!coin.exchange ? "aggregated" : coin.exchange }`, coin]),
             );
             setFavoriteData(normalized);
-            console.log("normalized: ", normalized)
+            // console.log("normalized: ", normalized)
         }
 
         profileSocket.on("profile-data", handleProfileData);
@@ -130,7 +130,6 @@ const ProfilePage = () => {
 
         removeFavorite(symbol, normalized);
         removeFavoriteLocal(symbol, normalized);
-        // removeFavoriteData
     }
 
     const columns = useMemo(() => [

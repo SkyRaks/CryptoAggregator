@@ -36,8 +36,6 @@ import { getFavoriteSocketData } from "../socket-service.js";
 
 export const getExchangeData = async (req, res) => {
     // used when render
-    // console.log('username: ', req.user.id);
-
     const { exchange } = req.body;
     const normalized = exchange.toLowerCase();
 
@@ -49,8 +47,6 @@ export const getExchangeData = async (req, res) => {
         } else {
             aggregatedData = await Market.find({ exchange: normalized });
         }
-
-        // console.log("records found: ", aggregatedData.length)
 
         res.status(200).json({success: true, data: aggregatedData});
     } catch (error) {
