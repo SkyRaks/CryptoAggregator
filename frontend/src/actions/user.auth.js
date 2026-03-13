@@ -25,6 +25,7 @@ export const userAuth = create((set, get) => (
                 method: "POST",
                 headers: {"Content-type":"application/json"},
                 body:JSON.stringify(newUser),
+                credentials: "include",
             })
 
             const data = await res.json();
@@ -48,6 +49,7 @@ export const userAuth = create((set, get) => (
                 method: "POST",
                 headers: {"Content-type":"application/json"},
                 body:JSON.stringify(logUser),
+                credentials: "include",
             })
 
             const data = await res.json();
@@ -98,6 +100,7 @@ export const userAuth = create((set, get) => (
                         "Authorization": `Bearer ${accessToken}`
                     },
                     body:JSON.stringify({phone}),
+                    credentials: "include",
                 });
 
                 const data = await res.json();
@@ -120,7 +123,8 @@ export const userAuth = create((set, get) => (
                     headers: {
                         "Content-type":"application/json",
                         "Authorization": `Bearer ${accessToken}`                        
-                    }
+                    },
+                    credentials: "include",
                 })
 
                 const data = await res.json()

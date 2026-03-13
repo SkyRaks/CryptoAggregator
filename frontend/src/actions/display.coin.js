@@ -16,7 +16,8 @@ export const useCryptoAggregator = create((set) => (
                     headers: {
                         "Content-type":"application/json"
                     },
-                    body:JSON.stringify({ exchange })
+                    body:JSON.stringify({ exchange }),
+                    credentials: "include",
                 });
                 
                 const result = await res.json();
@@ -36,7 +37,8 @@ export const useCryptoAggregator = create((set) => (
                         "Content-type": "application/json",
                         "Authorization": `Bearer ${accessToken}`
                     },
-                    body:JSON.stringify({symbol, exchange})
+                    body:JSON.stringify({symbol, exchange}),
+                    credentials: "include",
                 });
             } catch (error) {
                 console.error("add favorite failed", error.message);
@@ -53,7 +55,8 @@ export const useCryptoAggregator = create((set) => (
                         "Content-type": "application/json",
                         "Authorization": `Bearer ${accessToken}`
                     },
-                    body:JSON.stringify({symbol, exchange})
+                    body:JSON.stringify({symbol, exchange}),
+                    credentials: "include",
                 });
             } catch (error) {
                 console.error("remove favorite failed", error);
@@ -70,7 +73,8 @@ export const useCryptoAggregator = create((set) => (
                         "Content-type": "application/json",
                         "Authorization": `Bearer ${accessToken}`
                     },
-                    body:JSON.stringify({favCoinSymbol, favCoinExchange, amount, sign})
+                    body:JSON.stringify({favCoinSymbol, favCoinExchange, amount, sign}),
+                    credentials: "include",
                 });
                 const data = await res.json();
 
