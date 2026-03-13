@@ -1,2 +1,2 @@
 export const API_URL = 
-    import.meta.env.VITE_BACKEND_API_URL || "http://localhost:5000";
+    process.env.VITE_BACKEND_API_URL || "http://localhost:5000";
