@@ -21,8 +21,9 @@ import { Box } from "@mui/material";
 import { io } from "socket.io-client";
 import Container from '@mui/material/Container';
 import { userAuth } from '../actions/user.auth';
+import { API_URL } from '../api';
 
-const socket = io("http://localhost:5000", {autoConnect: false}) // create socket connection
+const socket = io(API_URL || "http://localhost:5000", {autoConnect: false}) // create socket connection
 
 const paginationModel = { page: 0, pageSize: 5 };
 

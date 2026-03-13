@@ -8,9 +8,10 @@ import parsePhoneNumber from 'libphonenumber-js'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { IoIosRemoveCircle } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
+import { API_URL } from '../api';
 
 // create socket connection
-let profileSocket = io("http://localhost:5000", {autoConnect: false})
+let profileSocket = io(API_URL || "http://localhost:5000", {autoConnect: false})
 
 const ProfilePage = () => {
 
