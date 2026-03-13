@@ -25,6 +25,7 @@ function App() {
     const refreshAccessToken = async () => {
 
       try {
+        console.log(`${API_URL}/user/refresh`);
         const res = await fetch(`${API_URL}/user/refresh`, {
           method: "POST",
           credentials: "include",
