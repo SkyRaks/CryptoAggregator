@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { API_URL } from "./api";
 
 export const userAuth = create((set, get) => (
     {
@@ -20,7 +21,7 @@ export const userAuth = create((set, get) => (
                 }
             }
 
-            const res = await fetch("/user/register", {
+            const res = await fetch(`${API_URL}/user/register`, {
                 method: "POST",
                 headers: {"Content-type":"application/json"},
                 body:JSON.stringify(newUser),
@@ -43,7 +44,7 @@ export const userAuth = create((set, get) => (
                 }
             }
 
-            const res = await fetch("/user/login", {
+            const res = await fetch(`${API_URL}/user/login`, {
                 method: "POST",
                 headers: {"Content-type":"application/json"},
                 body:JSON.stringify(logUser),
@@ -90,7 +91,7 @@ export const userAuth = create((set, get) => (
             }
 
             try {
-                const res = await fetch("/user/add-phone-number", {
+                const res = await fetch(`${API_URL}/user/add-phone-number`, {
                     method: "POST",
                     headers: {
                         "Content-type":"application/json",
@@ -114,7 +115,7 @@ export const userAuth = create((set, get) => (
             const accessToken = get().accessToken;
 
             try {
-                const res = await fetch("/user/delete-phone-number", {
+                const res = await fetch(`${API_URL}/user/delete-phone-number`, {
                     method: "POST",
                     headers: {
                         "Content-type":"application/json",

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { userAuth } from "./user.auth";
+import { API_URL } from "./api";
 
 export const useCryptoAggregator = create((set) => (
     {
@@ -10,7 +11,7 @@ export const useCryptoAggregator = create((set) => (
         fetchCoins: async(exchange) => {
             // http fetch
             try {
-                const res = await fetch("/crypto-aggregator", {
+                const res = await fetch(`${API_URL}/crypto-aggregator`, {
                     method: "POST",
                     headers: {
                         "Content-type":"application/json"
@@ -29,7 +30,7 @@ export const useCryptoAggregator = create((set) => (
             try {
                 const accessToken = userAuth.getState().accessToken;
                 
-                await fetch("/crypto-aggregator/add-favorite", {
+                await fetch(`${API_URL}/crypto-aggregator/add-favorite`, {
                     method: "POST",
                     headers: {
                         "Content-type": "application/json",
@@ -46,7 +47,7 @@ export const useCryptoAggregator = create((set) => (
             try {
                 const accessToken = userAuth.getState().accessToken;
 
-                await fetch("/crypto-aggregator/remove-favorite", {
+                await fetch(`${API_URL}/crypto-aggregator/remove-favorite`, {
                     method: "DELETE",
                     headers: {
                         "Content-type": "application/json",
@@ -63,7 +64,7 @@ export const useCryptoAggregator = create((set) => (
             try {
                 const accessToken = userAuth.getState().accessToken;
 
-                const res = await fetch("/crypto-aggregator/create-alert", {
+                const res = await fetch(`${API_URL}/crypto-aggregator/create-alert`, {
                     method: "POST",
                     headers: {
                         "Content-type": "application/json",

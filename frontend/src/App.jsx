@@ -10,7 +10,6 @@ import ProfilePage from "./pages/ProfilePage";
 
 import { userAuth } from "./actions/user.auth";
 import { API_URL } from "./api";
-// import CryptoAggregatorIcon from '../src/assets/CryptoAggregatorIcon.png';
 
 function App() {
 
