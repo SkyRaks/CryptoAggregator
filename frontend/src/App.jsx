@@ -22,12 +22,9 @@ function App() {
   const setUser = userAuth((state) => (state.setUser));
 
   useEffect(() => { // when page renders (or refresh) it gets access token
-    console.log("meta variables", import.meta.env);
-    console.log("api url", API_URL);
     const refreshAccessToken = async () => {
 
       try {
-        console.log(`${API_URL}/user/refresh`);
         const res = await fetch(`${API_URL}/user/refresh`, {
           method: "POST",
           credentials: "include",
